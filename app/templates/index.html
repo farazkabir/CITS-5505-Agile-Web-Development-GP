@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Feed | NewsPulse{% endblock %}
+
+{% block body %}
+<div class="app-shell">
+    <div class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+        <div class="offcanvas-header pb-0">
+            <span class="visually-hidden" id="sidebarOffcanvasLabel">Navigation</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            {% include "_sidebar.html" %}
+        </div>
+    </div>
+
+    <aside class="sidebar d-none d-lg-block">
+        {% include "_sidebar.html" %}
+    </aside>
+
+    <main class="app-main">
+        <header class="mobile-header d-lg-none">
+            <button class="btn btn-link p-1 text-body" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Open menu">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <span class="brand-text small">NewsPulse</span>
+            <span class="header-spacer"></span>
+        </header>
+
+        <div class="feed-container">
+            {% include "_flash.html" %}
+
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h1 class="fs-5 fw-bold mb-0">Your Feed</h1>
+                <button class="btn-glass-primary" type="button">
+                    <i class="bi bi-stars"></i><span>Generate AI Post</span>
+                </button>
+            </div>
+
+            <div class="filter-pills mb-4">
+                {% set filters = [
+                    ('all', 'All'),
+                    ('satire', 'Satire'),
+                    ('meme', 'Meme'),
+                    ('anger', 'Anger'),
+                    ('question', 'Question'),
+                    ('wholesome', 'Wholesome'),
+                    ('breaking', 'Breaking'),
+                ] %}
+                {% for key, label in filters %}
+                    <a href="{% if key == 'all' %}{{ url_for('main.index') }}{% else %}{{ url_for('main.index', filter=key) }}{% endif %}"
+                       class="filter-pill {% if key == active_filter %}active{% endif %}"
+                       data-filter="{{ key }}">{{ label }}</a>
+                {% endfor %}
+            </div>
+
+            <div class="post-list">
+                {% if not posts %}
+                <div class="empty-state glass">
+                    <i class="bi bi-inboxes"></i>
+                    <h2 class="h6 mb-1">No posts in this filter yet</h2>
+                    <p class="small mb-0 text-body-secondary">Try a different style or check back soon.</p>
+                </div>
+                {% endif %}
+                {% for post in posts %}
+                <article class="post-card glass" data-style="{{ post.style }}">
+                    <div class="d-flex gap-3 p-3 p-sm-4">
+                        <div class="d-none d-sm-flex flex-column align-items-center vote-col">
+                            <button class="vote-btn upvote {% if post.user_voted == 'up' %}active{% endif %}" type="button" aria-label="Upvote">
+                                <i class="bi bi-caret-up-fill"></i>
+                            </button>
+                            <span class="vote-count {% if post.user_voted == 'up' %}voted{% endif %}">{{ post.votes }}</span>
+                            <button class="vote-btn downvote {% if post.user_voted == 'down' %}active{% endif %}" type="button" aria-label="Downvote">
+                                <i class="bi bi-caret-down-fill"></i>
+                            </button>
+                        </div>
+                        <div class="flex-fill min-w-0">
+                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                                <div class="avatar-gradient">{{ post.author[:1]|upper }}</div>
+                                <a class="author-link" href="#">{{ post.author }}</a>
+                                {% if post.is_bot %}
+                                <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
+                                {% endif %}
+                                <span class="style-badge style-{{ post.style }}">
+                                    <i class="bi bi-{{ post.style_icon }}"></i>{{ post.style|capitalize }}
+                                </span>
+                                <span class="post-time ms-auto">
+                                    <i class="bi bi-clock"></i>{{ post.time_ago }}
+                                </span>
+                            </div>
+
+                            <a class="post-link" href="#">
+                                <h3 class="post-title">{{ post.title }}</h3>
+                                <p class="post-excerpt">{{ post.excerpt }}</p>
+                            </a>
+
+                            <div class="d-flex align-items-center gap-3 mt-3">
+                                <div class="d-sm-none vote-col-mobile">
+                                    <button class="vote-btn upvote {% if post.user_voted == 'up' %}active{% endif %}" type="button" aria-label="Upvote">
+                                        <i class="bi bi-caret-up-fill"></i>
+                                    </button>
+                                    <span class="vote-count {% if post.user_voted == 'up' %}voted{% endif %}">{{ post.votes }}</span>
+                                    <button class="vote-btn downvote {% if post.user_voted == 'down' %}active{% endif %}" type="button" aria-label="Downvote">
+                                        <i class="bi bi-caret-down-fill"></i>
+                                    </button>
+                                </div>
+                                <a class="comment-link" href="#">
+                                    <i class="bi bi-chat-square"></i>{{ post.comments }} comments
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
