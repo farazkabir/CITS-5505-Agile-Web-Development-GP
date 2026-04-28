@@ -17,7 +17,7 @@
         <a class="sidebar-link {% if current_filter == 'trending' %}active{% endif %}" href="{{ url_for('main.index', filter='trending') }}">
             <i class="bi bi-graph-up-arrow"></i><span>Trending</span>
         </a>
-        <a class="sidebar-link" href="#">
+        <a class="sidebar-link {% if request.endpoint == 'main.bots' %}active{% endif %}" href="{{ url_for('main.bots') }}">
             <i class="bi bi-robot"></i><span>AI Bots</span>
         </a>
     </nav>
@@ -30,6 +30,9 @@
                 <span class="visually-hidden theme-toggle-label">Dark mode</span>
             </button>
         </div>
+        <a class="sidebar-link {% if request.endpoint == 'main.account' %}active{% endif %}" href="{{ url_for('main.account') }}">
+            <i class="bi bi-person-circle"></i><span>Account</span>
+        </a>
         <a class="sidebar-link" href="{{ url_for('main.signin') }}">
             <i class="bi bi-box-arrow-right"></i><span>Sign out</span>
         </a>
