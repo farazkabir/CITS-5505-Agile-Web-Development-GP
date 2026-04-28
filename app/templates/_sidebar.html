@@ -1,37 +1,59 @@
 <div class="h-100 d-flex flex-column py-3 px-3">
-    <a class="d-flex align-items-center gap-2 px-2 mb-4 text-decoration-none" href="{{ url_for('main.index') }}">
-        <span class="brand-icon">
-            <i class="bi bi-broadcast"></i>
-        </span>
-        <span class="brand-text">NewsPulse</span>
+  <a
+    class="d-flex align-items-center gap-2 px-2 mb-4 text-decoration-none"
+    href="{{ url_for('main.index') }}"
+  >
+    <span class="brand-icon">
+      <i class="bi bi-broadcast"></i>
+    </span>
+    <span class="brand-text">NewsPulse</span>
+  </a>
+
+  {% set current_filter = request.args.get('filter', 'all') %}
+  <nav class="flex-fill d-flex flex-column gap-1">
+    <a
+      class="sidebar-link {% if request.endpoint == 'main.index' and current_filter in ('', 'all') %}active{% endif %}"
+      href="{{ url_for('main.index') }}"
+    >
+      <i class="bi bi-house"></i><span>Feed</span>
     </a>
+    <a
+      class="sidebar-link {% if current_filter == 'breaking' %}active{% endif %}"
+      href="{{ url_for('main.index', filter='breaking') }}"
+    >
+      <i class="bi bi-fire"></i><span>Breaking</span>
+    </a>
+    <a
+      class="sidebar-link {% if current_filter == 'trending' %}active{% endif %}"
+      href="{{ url_for('main.index', filter='trending') }}"
+    >
+      <i class="bi bi-graph-up-arrow"></i><span>Trending</span>
+    </a>
+    <a class="sidebar-link" href="#">
+      <i class="bi bi-robot"></i><span>AI Bots</span>
+    </a>
+  </nav>
 
-    {% set current_filter = request.args.get('filter', 'all') %}
-    <nav class="flex-fill d-flex flex-column gap-1">
-        <a class="sidebar-link {% if request.endpoint == 'main.index' and current_filter in ('', 'all') %}active{% endif %}" href="{{ url_for('main.index') }}">
-            <i class="bi bi-house"></i><span>Feed</span>
-        </a>
-        <a class="sidebar-link {% if current_filter == 'breaking' %}active{% endif %}" href="{{ url_for('main.index', filter='breaking') }}">
-            <i class="bi bi-fire"></i><span>Breaking</span>
-        </a>
-        <a class="sidebar-link {% if current_filter == 'trending' %}active{% endif %}" href="{{ url_for('main.index', filter='trending') }}">
-            <i class="bi bi-graph-up-arrow"></i><span>Trending</span>
-        </a>
-        <a class="sidebar-link" href="#">
-            <i class="bi bi-robot"></i><span>AI Bots</span>
-        </a>
-    </nav>
-
-    <div class="mt-3 pt-3 border-top">
-        <div class="d-flex align-items-center justify-content-between px-2 mb-2">
-            <span class="small text-body-secondary">Theme</span>
-            <button class="theme-toggle theme-toggle-circle" type="button" aria-label="Toggle dark and light mode">
-                <i class="bi bi-moon theme-toggle-icon"></i>
-                <span class="visually-hidden theme-toggle-label">Dark mode</span>
-            </button>
-        </div>
-        <a class="sidebar-link" href="{{ url_for('main.signin') }}">
-            <i class="bi bi-box-arrow-right"></i><span>Sign out</span>
-        </a>
+  <div class="mt-3 pt-3 border-top">
+    <div class="d-flex align-items-center justify-content-between px-2 mb-2">
+      <span class="small text-body-secondary">Theme</span>
+      <button
+        class="theme-toggle theme-toggle-circle"
+        type="button"
+        aria-label="Toggle dark and light mode"
+      >
+        <i class="bi bi-moon theme-toggle-icon"></i>
+        <span class="visually-hidden theme-toggle-label">Dark mode</span>
+      </button>
     </div>
+    {% if current_user.is_authenticated %}
+    <a class="sidebar-link" href="{{ url_for('main.logout') }}">
+      <i class="bi bi-box-arrow-right"></i><span>Sign out</span>
+    </a>
+    {% else %}
+    <a class="sidebar-link" href="{{ url_for('main.signin') }}">
+      <i class="bi bi-box-arrow-in-right"></i><span>Sign in</span>
+    </a>
+    {% endif %}
+  </div>
 </div>
