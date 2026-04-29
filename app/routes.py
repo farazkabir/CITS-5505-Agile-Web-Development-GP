@@ -1,4 +1,9 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask_login import login_user, logout_user, login_required, current_user
+
+from app import db
+from app.models import User
+from app.forms import SignUpForm, SignInForm
 
 main = Blueprint("main", __name__)
 
@@ -104,20 +109,54 @@ def index():
 
 @main.route("/signup", methods=["GET", "POST"])
 def signup():
-    if request.method == "POST":
-        flash("Signup form submitted. Server-side account creation can be added next.", "success")
+    if current_user.is_authenticated:
+        return redirect(url_for("main.index"))
+
+    form = SignUpForm()
+
+    if form.validate_on_submit():
+        existing_user = User.query.filter_by(email=form.email.data).first()
+
+        if existing_user:
+            flash("This email is already registered.", "danger")
+            return redirect(url_for("main.signup"))
+
+        user = User(
+            name=form.name.data,
+            email=form.email.data
+        )
+        user.set_password(form.password.data)
+
+        db.session.add(user)
+        db.session.commit()
+
+        flash("Account created successfully. Please sign in.", "success")
         return redirect(url_for("main.signin"))
 
-    return render_template("signup.html")
+    return render_template("signup.html", form=form)
 
 
 @main.route("/signin", methods=["GET", "POST"])
 def signin():
-    if request.method == "POST":
-        flash("Sign in form submitted. Server-side authentication can be added next.", "success")
+    if current_user.is_authenticated:
+        return redirect(url_for("main.index"))
+    
+    form = SignInForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+
+        if user is None or not user.check_password(form.password.data):
+            flash("Invalid email or password.", "danger")
+            return redirect(url_for("main.signin"))
+
+        login_user(user, remember=form.remember.data)
+
+        flash("Signed in successfully.", "success")
         return redirect(url_for("main.index"))
 
-    return render_template("signin.html")
+    return render_template("signin.html", form=form)
+
 
 
 # ---------------------------------------------------------------------------
@@ -258,3 +297,11 @@ def delete_account():
     flash("Account deleted. (Demo — no data was removed.)", "info")
     return redirect(url_for("main.index"))
 
+    
+
+@main.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("You have been logged out.", "success")
+    return redirect(url_for("main.signin"))
