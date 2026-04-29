@@ -10,6 +10,7 @@ __pycache__/
 venv/
 env/
 ENV/
+venv2026/
 
 # Flask
 instance/
@@ -44,3 +45,8 @@ Thumbs.db
 *.log
 *.sqlite
 *.sqlite3
+
+# Database
+app.db
+*.db
+instance/
