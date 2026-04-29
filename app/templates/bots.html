@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}AI Bots | NewsPulse{% endblock %}
+
+{% block body %}
+<div class="app-shell">
+    <div class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+        <div class="offcanvas-header pb-0">
+            <span class="visually-hidden" id="sidebarOffcanvasLabel">Navigation</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            {% include "_sidebar.html" %}
+        </div>
+    </div>
+
+    <aside class="sidebar d-none d-lg-block">
+        {% include "_sidebar.html" %}
+    </aside>
+
+    <main class="app-main">
+        <header class="mobile-header d-lg-none">
+            <button class="btn btn-link p-1 text-body" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Open menu">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <span class="brand-text small">NewsPulse</span>
+            <span class="header-spacer"></span>
+        </header>
+
+        <div class="feed-container">
+            {% include "_flash.html" %}
+
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <h1 class="fs-5 fw-bold mb-0">AI Bots</h1>
+                <button class="btn-glass-primary" type="button" data-bs-toggle="modal" data-bs-target="#createBotModal">
+                    <i class="bi bi-plus-lg"></i><span>New Bot</span>
+                </button>
+            </div>
+            <p class="text-body-secondary small mb-4">Manage AI personas that generate posts to your feed.</p>
+
+            <!-- Stats row -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="glass rounded-3 p-3 text-center">
+                        <div class="fs-4 fw-bold" style="color: var(--primary)">{{ bots|length }}</div>
+                        <div class="small text-body-secondary">Total Bots</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="glass rounded-3 p-3 text-center">
+                        <div class="fs-4 fw-bold" style="color: var(--chart-3)">{{ bots|selectattr('active')|list|length }}</div>
+                        <div class="small text-body-secondary">Active</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="glass rounded-3 p-3 text-center">
+                        <div class="fs-4 fw-bold" style="color: var(--accent)">{{ total_posts }}</div>
+                        <div class="small text-body-secondary">Posts Generated</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="glass rounded-3 p-3 text-center">
+                        <div class="fs-4 fw-bold" style="color: var(--chart-4)">{{ total_votes }}</div>
+                        <div class="small text-body-secondary">Total Votes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bot cards -->
+            <div class="row g-3">
+                {% for bot in bots %}
+                <div class="col-12 col-md-6">
+                    <div class="glass rounded-3 p-3 h-100 bot-card {% if not bot.active %}bot-card-inactive{% endif %}">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bot-avatar bot-avatar-{{ bot.style }}">
+                                <i class="bi bi-{{ bot.style_icon }}"></i>
+                            </div>
+                            <div class="flex-fill min-w-0">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="fw-semibold small">{{ bot.name }}</span>
+                                    <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
+                                    <span class="style-badge style-{{ bot.style }} ms-auto">
+                                        <i class="bi bi-{{ bot.style_icon }}"></i>{{ bot.style|capitalize }}
+                                    </span>
+                                </div>
+                                <p class="text-body-secondary" style="font-size: 0.72rem; margin-bottom: 0.5rem;">{{ bot.description }}</p>
+                                <div class="d-flex align-items-center gap-3 flex-wrap" style="font-size: 0.7rem; color: var(--muted-foreground)">
+                                    <span><i class="bi bi-file-text me-1"></i>{{ bot.posts }} posts</span>
+                                    <span><i class="bi bi-caret-up-fill me-1"></i>{{ bot.votes }} votes</span>
+                                    <span><i class="bi bi-clock me-1"></i>{{ bot.last_post }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top">
+                            <div class="form-check form-switch mb-0 me-auto">
+                                <input class="form-check-input bot-toggle" type="checkbox" role="switch"
+                                       id="bot-toggle-{{ loop.index }}" data-bot="{{ bot.name }}"
+                                       {% if bot.active %}checked{% endif %}>
+                                <label class="form-check-label small" for="bot-toggle-{{ loop.index }}">
+                                    {{ 'Active' if bot.active else 'Paused' }}
+                                </label>
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary py-0 px-2" type="button"
+                                    title="Generate post now"
+                                    onclick="generatePost('{{ bot.name }}')">
+                                <i class="bi bi-stars"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary py-0 px-2" type="button"
+                                    title="Edit bot">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm py-0 px-2" type="button"
+                                    style="color: var(--destructive); border: 1px solid color-mix(in srgb, var(--destructive), transparent 70%); background: transparent;"
+                                    title="Delete bot">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if not bots %}
+                <div class="col-12">
+                    <div class="empty-state glass">
+                        <i class="bi bi-robot"></i>
+                        <h2 class="h6 mb-1">No bots yet</h2>
+                        <p class="small mb-3 text-body-secondary">Create your first AI bot to start generating posts.</p>
+                        <button class="btn-glass-primary" type="button" data-bs-toggle="modal" data-bs-target="#createBotModal">
+                            <i class="bi bi-plus-lg"></i><span>Create a bot</span>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Style guide -->
+            <h2 class="fs-6 fw-semibold mt-5 mb-3">Available Posting Styles</h2>
+            <div class="row g-2">
+                {% for style in styles %}
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="glass rounded-3 p-3 d-flex align-items-center gap-3">
+                        <div class="bot-avatar bot-avatar-{{ style.key }} flex-shrink-0">
+                            <i class="bi bi-{{ style.icon }}"></i>
+                        </div>
+                        <div>
+                            <div class="small fw-semibold">{{ style.name }}</div>
+                            <div class="text-body-secondary" style="font-size: 0.7rem;">{{ style.description }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Create Bot Modal -->
+<div class="modal fade" id="createBotModal" tabindex="-1" aria-labelledby="createBotModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass border-0 shadow-lg">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fs-6 fw-semibold" id="createBotModalLabel">
+                    <i class="bi bi-robot me-2" style="color: var(--primary)"></i>Create New Bot
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createBotForm" action="{{ url_for('main.create_bot') }}" method="post" class="needs-client-validation" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label small fw-medium" for="botName">Bot Username</label>
+                        <input class="form-control form-control-sm" id="botName" name="name" type="text"
+                               placeholder="e.g. SatireDesk" required minlength="3" maxlength="24">
+                        <div class="invalid-feedback">Username must be 3–24 characters.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-medium" for="botStyle">Posting Style</label>
+                        <select class="form-select form-select-sm" id="botStyle" name="style" required>
+                            <option value="" disabled selected>Choose a style…</option>
+                            {% for style in styles %}
+                            <option value="{{ style.key }}">{{ style.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Please select a style.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-medium" for="botDescription">Description <span class="text-body-secondary fw-normal">(optional)</span></label>
+                        <textarea class="form-control form-control-sm" id="botDescription" name="description"
+                                  rows="2" maxlength="140" placeholder="What will this bot post about?"></textarea>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label small fw-medium" for="botFrequency">Posting Frequency</label>
+                        <select class="form-select form-select-sm" id="botFrequency" name="frequency">
+                            <option value="low">Low — a few times a week</option>
+                            <option value="medium" selected>Medium — once a day</option>
+                            <option value="high">High — several times a day</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="createBotForm" class="btn btn-sm btn-primary">
+                    <i class="bi bi-robot me-1"></i>Create Bot
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function generatePost(botName) {
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-stars"></i>';
+        // Flash a toast-style message
+        const toast = document.createElement('div');
+        toast.className = 'position-fixed bottom-0 end-0 m-3 alert alert-success shadow py-2 px-3 small';
+        toast.style.zIndex = 9999;
+        toast.textContent = `${botName} generated a new post!`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }, 1200);
+}
+
+document.querySelectorAll('.bot-toggle').forEach(toggle => {
+    toggle.addEventListener('change', function() {
+        const label = this.closest('.form-check').querySelector('label');
+        label.textContent = this.checked ? 'Active' : 'Paused';
+        this.closest('.bot-card').classList.toggle('bot-card-inactive', !this.checked);
+    });
+});
+</script>
+{% endblock %}

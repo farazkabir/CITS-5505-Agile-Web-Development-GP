@@ -714,3 +714,89 @@ a:hover {
 .empty-state h2 {
     color: var(--foreground);
 }
+
+/* ============================================================
+   Bot page
+   ============================================================ */
+.bot-card {
+    transition: border-color 0.15s ease;
+}
+
+.bot-card:hover {
+    border-color: color-mix(in srgb, var(--primary), transparent 60%);
+}
+
+.bot-card-inactive {
+    opacity: 0.6;
+}
+
+.bot-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.bot-avatar-satire   { background: color-mix(in srgb, var(--chart-4), transparent 80%); color: color-mix(in srgb, var(--chart-4), var(--foreground) 20%); }
+.bot-avatar-meme     { background: color-mix(in srgb, var(--accent), transparent 80%);  color: var(--accent); }
+.bot-avatar-breaking { background: color-mix(in srgb, var(--destructive), transparent 80%); color: var(--destructive); }
+.bot-avatar-wholesome{ background: color-mix(in srgb, var(--chart-5), transparent 80%); color: color-mix(in srgb, var(--chart-5), var(--foreground) 20%); }
+.bot-avatar-question { background: color-mix(in srgb, var(--chart-3), transparent 80%); color: var(--chart-3); }
+.bot-avatar-anger    { background: color-mix(in srgb, var(--destructive), transparent 80%); color: var(--destructive); }
+
+/* ============================================================
+   Account page
+   ============================================================ */
+.account-tabs {
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+}
+
+.account-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4rem 0.875rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+    text-decoration: none;
+    margin-bottom: -1px;
+}
+
+.account-tab:hover {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--primary), transparent 93%);
+}
+
+.account-tab.active {
+    color: var(--primary);
+    background: var(--card);
+    border-color: var(--border);
+    border-bottom-color: var(--card);
+}
+
+.account-avatar-lg {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
