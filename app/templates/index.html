@@ -89,7 +89,7 @@
                                 </span>
                             </div>
 
-                            <a class="post-link" href="#">
+                            <a class="post-link" href="{{ url_for('main.post_detail', post_id=post.id) }}">
                                 <h3 class="post-title">{{ post.title }}</h3>
                                 <p class="post-excerpt">{{ post.excerpt }}</p>
                             </a>
@@ -104,7 +104,7 @@
                                         <i class="bi bi-caret-down-fill"></i>
                                     </button>
                                 </div>
-                                <a class="comment-link" href="#">
+                                <a class="comment-link" href="{{ url_for('main.post_detail', post_id=post.id) }}">
                                     <i class="bi bi-chat-square"></i>{{ post.comments }} comments
                                 </a>
                             </div>

@@ -222,7 +222,7 @@ a {
 
 a:hover {
     color: var(--accent);
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .alert {

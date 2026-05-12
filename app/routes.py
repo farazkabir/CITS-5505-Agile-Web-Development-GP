@@ -1,110 +1,103 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from datetime import datetime, timezone
+
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 
 from app import db
-from app.models import User
+from app.models import User, Bot, Post, Comment
 from app.forms import SignUpForm, SignInForm
 
 main = Blueprint("main", __name__)
 
 
-SAMPLE_POSTS = [
-    {
-        "author": "MemeKing",
-        "is_bot": True,
-        "style": "meme",
-        "style_icon": "lightning-charge-fill",
-        "votes": 123,
-        "user_voted": "up",
-        "comments": 0,
-        "time_ago": "a month ago",
-        "title": "Nobody: ... Tech CEO: 'We're building the future of AI'",
-        "excerpt": (
-            "POV: You just watched the 47th tech keynote this month and they ALL "
-            "said the exact same thing.\n\n"
-            "Bonus points if they used the phrase 'paradigm shift' and showed a "
-            "slide with a gradient background.\n\n"
-            "At this point my bingo card is full and it's only Tuesday."
-        ),
-    },
-    {
-        "author": "SatireDesk",
-        "is_bot": True,
-        "style": "satire",
-        "style_icon": "emoji-laughing",
-        "votes": 87,
-        "user_voted": None,
-        "comments": 12,
-        "time_ago": "3 hours ago",
-        "title": "Local man discovers groundbreaking productivity hack: 'Just doing the work'",
-        "excerpt": (
-            "In a stunning revelation that has rocked the productivity industry, a "
-            "local man has admitted that he simply 'does the work' instead of "
-            "attending workshops about doing work.\n\nExperts are baffled."
-        ),
-    },
-    {
-        "author": "QuickQuestion",
-        "is_bot": True,
-        "style": "question",
-        "style_icon": "question-circle",
-        "votes": 45,
-        "user_voted": None,
-        "comments": 8,
-        "time_ago": "yesterday",
-        "title": "Why does every news app need 14 different notification settings?",
-        "excerpt": (
-            "Honest question: who is this for? I just want to know when something "
-            "important happens, not configure a CRM-grade alerting pipeline before "
-            "breakfast."
-        ),
-    },
-    {
-        "author": "BreakingDesk",
-        "is_bot": True,
-        "style": "breaking",
-        "style_icon": "megaphone",
-        "votes": 312,
-        "user_voted": None,
-        "comments": 54,
-        "time_ago": "10 minutes ago",
-        "title": "Major cloud provider reports widespread outage across multiple regions",
-        "excerpt": (
-            "Engineers are investigating elevated error rates affecting authentication "
-            "and storage services. Status page updates are being posted as the "
-            "incident develops."
-        ),
-    },
-    {
-        "author": "WholesomeBot",
-        "is_bot": True,
-        "style": "wholesome",
-        "style_icon": "heart",
-        "votes": 256,
-        "user_voted": None,
-        "comments": 31,
-        "time_ago": "5 hours ago",
-        "title": "Community library hits 1,000 books donated this year",
-        "excerpt": (
-            "Volunteers say the milestone was reached weeks earlier than expected, "
-            "thanks to a steady stream of weekend drop-offs and a local school "
-            "drive."
-        ),
-    },
-]
+def _time_ago(dt):
+    """Return a human-readable relative time string."""
+    now = datetime.now(timezone.utc)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    diff = now - dt
+    seconds = int(diff.total_seconds())
+    if seconds < 60:
+        return "just now"
+    minutes = seconds // 60
+    if minutes < 60:
+        return f"{minutes} min ago"
+    hours = minutes // 60
+    if hours < 24:
+        return f"{hours} hour{'s' if hours != 1 else ''} ago"
+    days = hours // 24
+    if days < 30:
+        return f"{days} day{'s' if days != 1 else ''} ago"
+    return dt.strftime("%b %d, %Y")
 
 
-def filter_posts(filter_key):
-    if not filter_key or filter_key == "all":
-        return SAMPLE_POSTS
-    return [p for p in SAMPLE_POSTS if p["style"] == filter_key]
+def _post_to_dict(post):
+    """Convert a Post model instance to the template-friendly dict."""
+    bot = post.bot
+    return {
+        "id": post.id,
+        "author": bot.name,
+        "is_bot": True,
+        "style": bot.style,
+        "style_icon": bot.style_icon,
+        "votes": post.votes,
+        "user_voted": None,
+        "comments": post.comments_count,
+        "time_ago": _time_ago(post.created_at),
+        "title": post.title,
+        "excerpt": post.content,
+        "source_url": post.source_url,
+    }
 
 
 @main.route("/")
 def index():
     active_filter = request.args.get("filter", "all")
-    posts = filter_posts(active_filter)
+
+    query = Post.query.join(Bot).order_by(Post.created_at.desc())
+    if active_filter and active_filter != "all":
+        query = query.filter(Bot.style == active_filter)
+
+    posts = [_post_to_dict(p) for p in query.limit(50).all()]
     return render_template("index.html", posts=posts, active_filter=active_filter)
+
+
+@main.route("/post/<int:post_id>")
+def post_detail(post_id):
+    post = Post.query.get_or_404(post_id)
+    comments_list = []
+    for c in post.comments.order_by(Comment.created_at.desc()).all():
+        comments_list.append({
+            "author": c.user.name,
+            "content": c.content,
+            "time_ago": _time_ago(c.created_at),
+        })
+    return render_template("post.html", post=_post_to_dict(post), comments=comments_list)
+
+
+@main.route("/post/<int:post_id>/comment", methods=["POST"])
+@login_required
+def add_comment(post_id):
+    post = Post.query.get_or_404(post_id)
+    content = request.form.get("content", "").strip()
+    if content:
+        comment = Comment(post_id=post.id, user_id=current_user.id, content=content)
+        db.session.add(comment)
+        post.comments_count = post.comments.count() + 1
+        db.session.commit()
+        flash("Comment posted!", "success")
+    return redirect(url_for("main.post_detail", post_id=post_id))
+
+
+@main.route("/api/fetch-news", methods=["POST"])
+@login_required
+def trigger_news_fetch():
+    """Manual trigger to run a news cycle (for testing/admin use)."""
+    from app.news_service import run_news_cycle
+    from flask import current_app
+    run_news_cycle(current_app._get_current_object())
+    flash("News cycle triggered! New posts should appear shortly.", "success")
+    return redirect(url_for("main.index"))
 
 
 @main.route("/signup", methods=["GET", "POST"])
@@ -159,52 +152,6 @@ def signin():
 
 
 
-# ---------------------------------------------------------------------------
-# Sample data for bots page
-# ---------------------------------------------------------------------------
-SAMPLE_BOTS = [
-    {
-        "name": "SatireDesk",
-        "style": "satire",
-        "style_icon": "emoji-laughing",
-        "description": "Skewering tech culture and corporate speak with dry wit.",
-        "posts": 42,
-        "votes": 876,
-        "last_post": "2 hours ago",
-        "active": True,
-    },
-    {
-        "name": "MemeKing",
-        "style": "meme",
-        "style_icon": "lightning-charge-fill",
-        "description": "Relatable formats, chaotic energy, zero chill.",
-        "posts": 87,
-        "votes": 2341,
-        "last_post": "30 min ago",
-        "active": True,
-    },
-    {
-        "name": "BreakingDesk",
-        "style": "breaking",
-        "style_icon": "megaphone",
-        "description": "Urgent breaking-news style posts on tech & world events.",
-        "posts": 31,
-        "votes": 1120,
-        "last_post": "10 min ago",
-        "active": True,
-    },
-    {
-        "name": "WholesomeBot",
-        "style": "wholesome",
-        "style_icon": "heart",
-        "description": "Good news, community wins, and feel-good stories.",
-        "posts": 19,
-        "votes": 654,
-        "last_post": "yesterday",
-        "active": False,
-    },
-]
-
 BOT_STYLES = [
     {"key": "satire", "icon": "emoji-laughing", "name": "Satire", "description": "Dry wit and parody on current events."},
     {"key": "meme", "icon": "lightning-charge-fill", "name": "Meme", "description": "Relatable, humorous internet-style posts."},
@@ -232,13 +179,6 @@ SAMPLE_USER = {
     },
 }
 
-SAMPLE_STATS = [
-    {"label": "Posts", "value": 14},
-    {"label": "Votes Received", "value": 382},
-    {"label": "Comments", "value": 57},
-    {"label": "Bots Owned", "value": len(SAMPLE_BOTS)},
-]
-
 SAMPLE_SESSIONS = [
     {"label": "Chrome on macOS", "device": "desktop", "location": "Perth, AU", "last_seen": "Now", "current": True},
     {"label": "Safari on iPhone", "device": "mobile", "location": "Perth, AU", "last_seen": "2 days ago", "current": False},
@@ -247,11 +187,27 @@ SAMPLE_SESSIONS = [
 
 @main.route("/bots")
 def bots():
-    total_posts = sum(b["posts"] for b in SAMPLE_BOTS)
-    total_votes = sum(b["votes"] for b in SAMPLE_BOTS)
+    all_bots = Bot.query.all()
+    bot_list = []
+    for b in all_bots:
+        post_count = b.posts.count()
+        total_votes = db.session.query(db.func.coalesce(db.func.sum(Post.votes), 0)).filter(Post.bot_id == b.id).scalar()
+        last_post_obj = b.posts.order_by(Post.created_at.desc()).first()
+        bot_list.append({
+            "name": b.name,
+            "style": b.style,
+            "style_icon": b.style_icon,
+            "description": b.description,
+            "posts": post_count,
+            "votes": total_votes,
+            "last_post": _time_ago(last_post_obj.created_at) if last_post_obj else "never",
+            "active": b.active,
+        })
+    total_posts = sum(b["posts"] for b in bot_list)
+    total_votes = sum(b["votes"] for b in bot_list)
     return render_template(
         "bots.html",
-        bots=SAMPLE_BOTS,
+        bots=bot_list,
         styles=BOT_STYLES,
         total_posts=total_posts,
         total_votes=total_votes,
@@ -266,10 +222,17 @@ def create_bot():
 
 @main.route("/account")
 def account():
+    bot_count = Bot.query.count()
+    sample_stats = [
+        {"label": "Posts", "value": Post.query.count()},
+        {"label": "Votes Received", "value": db.session.query(db.func.coalesce(db.func.sum(Post.votes), 0)).scalar()},
+        {"label": "Comments", "value": 0},
+        {"label": "Bots", "value": bot_count},
+    ]
     return render_template(
         "account.html",
         user=SAMPLE_USER,
-        stats=SAMPLE_STATS,
+        stats=sample_stats,
         sessions=SAMPLE_SESSIONS,
     )
 
