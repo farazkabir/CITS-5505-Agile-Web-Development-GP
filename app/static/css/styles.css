@@ -557,11 +557,11 @@ a:hover {
     font-weight: 500;
     color: color-mix(in srgb, var(--foreground), transparent 20%);
     text-decoration: none;
-    transition: color 0.15s ease;
+    cursor: default;
 }
 
 .author-link:hover {
-    color: var(--primary);
+    color: color-mix(in srgb, var(--foreground), transparent 20%);
     text-decoration: none;
 }
 

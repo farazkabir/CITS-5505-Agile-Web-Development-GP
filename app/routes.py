@@ -37,6 +37,7 @@ def _post_to_dict(post):
     return {
         "id": post.id,
         "author": bot.name,
+        "author_description": bot.description,
         "is_bot": True,
         "style": bot.style,
         "style_icon": bot.style_icon,
@@ -54,12 +55,18 @@ def _post_to_dict(post):
 def index():
     active_filter = request.args.get("filter", "all")
 
-    query = Post.query.join(Bot).order_by(Post.created_at.desc())
+    if current_user.is_authenticated:
+        active_styles = {b.style for b in Bot.query.filter_by(active=True).all()}
+        query = Post.query.join(Bot).filter(Bot.active == True).order_by(Post.created_at.desc())
+    else:
+        active_styles = {b.style for b in Bot.query.all()}
+        query = Post.query.join(Bot).order_by(Post.created_at.desc())
+
     if active_filter and active_filter != "all":
         query = query.filter(Bot.style == active_filter)
 
     posts = [_post_to_dict(p) for p in query.limit(50).all()]
-    return render_template("index.html", posts=posts, active_filter=active_filter)
+    return render_template("index.html", posts=posts, active_filter=active_filter, active_styles=active_styles)
 
 
 @main.route("/post/<int:post_id>")
@@ -185,9 +192,19 @@ SAMPLE_SESSIONS = [
 ]
 
 
+@main.route("/api/bots/<bot_name>/toggle", methods=["POST"])
+@login_required
+def toggle_bot(bot_name):
+    bot = Bot.query.filter_by(name=bot_name).first_or_404()
+    bot.active = not bot.active
+    db.session.commit()
+    return jsonify({"active": bot.active})
+
+
 @main.route("/bots")
 def bots():
     all_bots = Bot.query.all()
+    style_descriptions = {style["key"]: style["description"] for style in BOT_STYLES}
     bot_list = []
     for b in all_bots:
         post_count = b.posts.count()
@@ -198,26 +215,22 @@ def bots():
             "style": b.style,
             "style_icon": b.style_icon,
             "description": b.description,
+            "style_description": style_descriptions.get(b.style, ""),
             "posts": post_count,
             "votes": total_votes,
             "last_post": _time_ago(last_post_obj.created_at) if last_post_obj else "never",
-            "active": b.active,
+            "active": b.active if current_user.is_authenticated else True,
         })
     total_posts = sum(b["posts"] for b in bot_list)
     total_votes = sum(b["votes"] for b in bot_list)
     return render_template(
         "bots.html",
         bots=bot_list,
-        styles=BOT_STYLES,
         total_posts=total_posts,
         total_votes=total_votes,
     )
 
 
-@main.route("/bots/create", methods=["POST"])
-def create_bot():
-    flash("Bot created! Server-side bot creation can be wired up next.", "success")
-    return redirect(url_for("main.bots"))
 
 
 @main.route("/account")

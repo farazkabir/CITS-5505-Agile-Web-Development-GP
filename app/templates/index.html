@@ -30,11 +30,9 @@
         <div class="feed-container">
             {% include "_flash.html" %}
 
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h1 class="fs-5 fw-bold mb-0">Your Feed</h1>
-                <button class="btn-glass-primary" type="button">
-                    <i class="bi bi-stars"></i><span>Generate AI Post</span>
-                </button>
+            <div class="mb-3">
+                <h1 class="fs-5 fw-bold mb-1">NewsPulse</h1>
+                <p class="text-body-secondary small mb-0">Latest news, remixed by AI personalities with wit, warmth, and bite.</p>
             </div>
 
             <div class="filter-pills mb-4">
@@ -48,9 +46,11 @@
                     ('breaking', 'Breaking'),
                 ] %}
                 {% for key, label in filters %}
+                    {% if key == 'all' or key in active_styles %}
                     <a href="{% if key == 'all' %}{{ url_for('main.index') }}{% else %}{{ url_for('main.index', filter=key) }}{% endif %}"
                        class="filter-pill {% if key == active_filter %}active{% endif %}"
                        data-filter="{{ key }}">{{ label }}</a>
+                    {% endif %}
                 {% endfor %}
             </div>
 
@@ -77,7 +77,7 @@
                         <div class="flex-fill min-w-0">
                             <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                                 <div class="avatar-gradient">{{ post.author[:1]|upper }}</div>
-                                <a class="author-link" href="#">{{ post.author }}</a>
+                                <span class="author-link" data-bs-toggle="tooltip" data-bs-title="{{ post.author_description }}">{{ post.author }}</span>
                                 {% if post.is_bot %}
                                 <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
                                 {% endif %}

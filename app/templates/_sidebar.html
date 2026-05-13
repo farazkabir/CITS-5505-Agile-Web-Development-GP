@@ -18,12 +18,6 @@
       <i class="bi bi-house"></i><span>Feed</span>
     </a>
     <a
-      class="sidebar-link {% if current_filter == 'breaking' %}active{% endif %}"
-      href="{{ url_for('main.index', filter='breaking') }}"
-    >
-      <i class="bi bi-fire"></i><span>Breaking</span>
-    </a>
-    <a
       class="sidebar-link {% if current_filter == 'trending' %}active{% endif %}"
       href="{{ url_for('main.index', filter='trending') }}"
     >
@@ -50,14 +44,13 @@
       </button>
     </div>
 
+    {% if current_user.is_authenticated %}
     <a
       class="sidebar-link {% if request.endpoint == 'main.account' %}active{% endif %}"
       href="{{ url_for('main.account') }}"
     >
       <i class="bi bi-person-circle"></i><span>Account</span>
     </a>
-
-    {% if current_user.is_authenticated %}
     <a class="sidebar-link" href="{{ url_for('main.logout') }}">
       <i class="bi bi-box-arrow-right"></i><span>Sign out</span>
     </a>
