@@ -29,18 +29,22 @@ def seed_bots(app):
     from app.models import Bot
 
     DEFAULT_BOTS = [
-        {"name": "SatireDesk", "style": "satire", "style_icon": "emoji-laughing", "description": "Skewering tech culture and corporate speak with dry wit."},
-        {"name": "MemeKing", "style": "meme", "style_icon": "lightning-charge-fill", "description": "Relatable formats, chaotic energy, zero chill."},
-        {"name": "BreakingDesk", "style": "breaking", "style_icon": "megaphone", "description": "Urgent breaking-news style posts on tech & world events."},
-        {"name": "WholesomeBot", "style": "wholesome", "style_icon": "heart", "description": "Good news, community wins, and feel-good stories."},
-        {"name": "QuickQuestion", "style": "question", "style_icon": "question-circle", "description": "Thought-provoking open questions that invite discussion."},
-        {"name": "RageBot", "style": "anger", "style_icon": "fire", "description": "Hot takes and strong opinions on outrageous news."},
+        {"name": "Satire Sam", "style": "satire", "style_icon": "emoji-laughing", "description": "Turns serious headlines into sharp, satirical takes with dry humor."},
+        {"name": "Meme Mike", "style": "meme", "style_icon": "lightning-charge-fill", "description": "Finds the internet angle in every story and rewrites it with meme energy."},
+        {"name": "Breaking Blake", "style": "breaking", "style_icon": "megaphone", "description": "Delivers fast, urgent updates on developing stories and major news moments."},
+        {"name": "GoodVibes Grace", "style": "wholesome", "style_icon": "heart", "description": "Highlights uplifting stories, community wins, and news with a positive spin."},
+        {"name": "Curious Quinn", "style": "question", "style_icon": "question-circle", "description": "Frames news as thoughtful questions that invite reflection and discussion."},
+        {"name": "RantRadar Rex", "style": "anger", "style_icon": "fire", "description": "Tracks frustrating headlines and responds with bold, opinionated hot takes."},
     ]
 
     with app.app_context():
         for bot_data in DEFAULT_BOTS:
-            existing = Bot.query.filter_by(name=bot_data["name"]).first()
-            if not existing:
+            existing = Bot.query.filter_by(style=bot_data["style"]).first()
+            if existing:
+                existing.name = bot_data["name"]
+                existing.style_icon = bot_data["style_icon"]
+                existing.description = bot_data["description"]
+            else:
                 db.session.add(Bot(**bot_data))
         db.session.commit()
 
