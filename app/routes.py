@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from app import db
 from app.models import User, Bot, Post, Comment, Vote
-from app.forms import SignUpForm, SignInForm
+from app.forms import SignUpForm, SignInForm, ProfileForm
 
 main = Blueprint("main", __name__)
 
@@ -79,14 +79,15 @@ def index():
     posts = [_post_to_dict(p) for p in query.limit(50).all()]
     return render_template("index.html", posts=posts, active_filter=active_filter, active_styles=active_styles)
 
-
+# for adding links on comments authors name to user profile page
 @main.route("/post/<int:post_id>")
 def post_detail(post_id):
     post = Post.query.get_or_404(post_id)
     comments_list = []
     for c in post.comments.order_by(Comment.created_at.desc()).all():
         comments_list.append({
-            "author": c.user.name,
+            "user_id": c.user.id,
+            "author": c.user.display_name,
             "content": c.content,
             "time_ago": _time_ago(c.created_at),
         })
@@ -192,6 +193,7 @@ def signup():
 
         user = User(
             name=form.name.data,
+            display_name=form.name.data,
             email=form.email.data
         )
         user.set_password(form.password.data)
@@ -303,45 +305,121 @@ def bots():
 
 
 @main.route("/account")
+@login_required
 def account():
-    bot_count = Bot.query.count()
-    sample_stats = [
-        {"label": "Posts", "value": Post.query.count()},
-        {"label": "Votes Received", "value": db.session.query(db.func.coalesce(db.func.sum(Post.votes), 0)).scalar()},
-        {"label": "Comments", "value": 0},
-        {"label": "Bots", "value": bot_count},
+    user_vote_count = Vote.query.filter_by(user_id=current_user.id).count()
+    user_comment_count = Comment.query.filter_by(user_id=current_user.id).count()
+
+    interacted_bot_count = (
+        Bot.query
+        .join(Post)
+        .outerjoin(Vote, Vote.post_id == Post.id)
+        .outerjoin(Comment, Comment.post_id == Post.id)
+        .filter(
+            db.or_(
+                Vote.user_id == current_user.id,
+                Comment.user_id == current_user.id
+            )
+        )
+        .distinct()
+        .count()
+    )
+
+    stats = [
+        {"label": "Votes", "value": user_vote_count},
+        {"label": "Comments", "value": user_comment_count},
+        {"label": "Interacted Bots", "value": interacted_bot_count},
     ]
+    
+    voted_bots = (
+        Bot.query
+        .join(Post)
+        .join(Vote, Vote.post_id == Post.id)
+        .filter(Vote.user_id == current_user.id)
+        .distinct()
+        .all()
+        )
+    
+    commented_bots = (
+        Bot.query
+        .join(Post)
+        .join(Comment, Comment.post_id == Post.id)
+        .filter(Comment.user_id == current_user.id)
+        .distinct()
+        .all()
+        )
+    
+
+    form = ProfileForm(obj=current_user)
+
     return render_template(
         "account.html",
-        user=SAMPLE_USER,
-        stats=sample_stats,
-        sessions=SAMPLE_SESSIONS,
+        user=current_user,
+        stats=stats,
+        form=form,
+        voted_bots=voted_bots,
+        commented_bots=commented_bots,
     )
 
 
 @main.route("/account/profile", methods=["POST"])
+@login_required
 def update_profile():
+    form = ProfileForm()
+
+    if not form.validate_on_submit():
+        flash("Please check your profile details.", "danger")
+        return redirect(url_for("main.account"))
+
+    existing_user = User.query.filter(
+        User.email == form.email.data,
+        User.id != current_user.id
+    ).first()
+
+    if existing_user:
+        flash("This email is already used by another account.", "danger")
+        return redirect(url_for("main.account"))
+
+    current_user.display_name = form.display_name.data
+    current_user.bio = form.bio.data or ""
+    current_user.website = form.website.data or ""
+    current_user.email = form.email.data
+
+    db.session.commit()
+
     flash("Profile updated successfully.", "success")
     return redirect(url_for("main.account"))
 
 
-@main.route("/account/preferences", methods=["POST"])
-def update_preferences():
-    flash("Preferences saved.", "success")
-    return redirect(url_for("main.account") + "#preferences-pane")
 
+@main.route("/user/<int:user_id>")
+def user_profile(user_id):
+    profile_user = User.query.get_or_404(user_id)
 
-@main.route("/account/password", methods=["POST"])
-def update_password():
-    flash("Password updated successfully.", "success")
-    return redirect(url_for("main.account") + "#security-pane")
+    voted_bots = (
+        Bot.query
+        .join(Post)
+        .join(Vote, Vote.post_id == Post.id)
+        .filter(Vote.user_id == profile_user.id)
+        .distinct()
+        .all()
+    )
 
+    commented_bots = (
+        Bot.query
+        .join(Post)
+        .join(Comment, Comment.post_id == Post.id)
+        .filter(Comment.user_id == profile_user.id)
+        .distinct()
+        .all()
+    )
 
-@main.route("/account/delete")
-def delete_account():
-    flash("Account deleted. (Demo — no data was removed.)", "info")
-    return redirect(url_for("main.index"))
-
+    return render_template(
+        "user_profile.html",
+        profile_user=profile_user,
+        voted_bots=voted_bots,
+        commented_bots=commented_bots,
+    )
     
 
 @main.route("/logout")
