@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 
 from app import db
-from app.models import User, Bot, Post, Comment
+from app.models import User, Bot, Post, Comment, Vote
 from app.forms import SignUpForm, SignInForm
 
 main = Blueprint("main", __name__)
@@ -34,6 +34,17 @@ def _time_ago(dt):
 def _post_to_dict(post):
     """Convert a Post model instance to the template-friendly dict."""
     bot = post.bot
+
+    user_voted = None
+    if current_user.is_authenticated:
+        existing_vote = Vote.query.filter_by(
+            post_id=post.id,
+            user_id=current_user.id
+        ).first()
+
+        if existing_vote:
+            user_voted = "up" if existing_vote.value == 1 else "down"
+
     return {
         "id": post.id,
         "author": bot.name,
@@ -42,7 +53,7 @@ def _post_to_dict(post):
         "style": bot.style,
         "style_icon": bot.style_icon,
         "votes": post.votes,
-        "user_voted": None,
+        "user_voted": user_voted,
         "comments": post.comments_count,
         "time_ago": _time_ago(post.created_at),
         "title": post.title,
@@ -94,6 +105,64 @@ def add_comment(post_id):
         db.session.commit()
         flash("Comment posted!", "success")
     return redirect(url_for("main.post_detail", post_id=post_id))
+
+# voting
+@main.route("/post/<int:post_id>/vote", methods=["POST"])
+@login_required
+def vote_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    data = request.get_json(silent=True) or {}
+    action = data.get("action")
+
+    if action not in ["up", "down"]:
+        return jsonify({
+            "success": False,
+            "error": "Invalid vote action"
+        }), 400
+
+    vote_value = 1 if action == "up" else -1
+
+    existing_vote = Vote.query.filter_by(
+        post_id=post.id,
+        user_id=current_user.id
+    ).first()
+
+    if existing_vote is None:
+        new_vote = Vote(
+            post_id=post.id,
+            user_id=current_user.id,
+            value=vote_value
+        )
+        db.session.add(new_vote)
+        post.votes += vote_value
+
+    elif existing_vote.value == vote_value:
+        post.votes -= existing_vote.value
+        db.session.delete(existing_vote)
+
+    else:
+        post.votes -= existing_vote.value
+        existing_vote.value = vote_value
+        post.votes += vote_value
+
+    db.session.commit()
+
+    final_vote = Vote.query.filter_by(
+        post_id=post.id,
+        user_id=current_user.id
+    ).first()
+
+    user_voted = None
+    if final_vote:
+        user_voted = "up" if final_vote.value == 1 else "down"
+
+    return jsonify({
+        "success": True,
+        "votes": post.votes,
+        "user_voted": user_voted
+    })
+
 
 
 @main.route("/api/fetch-news", methods=["POST"])
@@ -281,3 +350,6 @@ def logout():
     logout_user()
     flash("You have been logged out.", "success")
     return redirect(url_for("main.signin"))
+
+
+

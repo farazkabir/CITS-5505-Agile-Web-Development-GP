@@ -1,127 +1,248 @@
-{% extends "base.html" %}
-
-{% block title %}{{ post.title }} | NewsPulse{% endblock %}
-
-{% block body %}
+{% extends "base.html" %} {% block title %}{{ post.title }} | NewsPulse{%
+endblock %} {% block body %}
 <div class="app-shell">
-    <div class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-        <div class="offcanvas-header pb-0">
-            <span class="visually-hidden" id="sidebarOffcanvasLabel">Navigation</span>
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            {% include "_sidebar.html" %}
-        </div>
+  <div
+    class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none"
+    tabindex="-1"
+    id="sidebarOffcanvas"
+    aria-labelledby="sidebarOffcanvasLabel"
+  >
+    <div class="offcanvas-header pb-0">
+      <span class="visually-hidden" id="sidebarOffcanvasLabel">Navigation</span>
+      <button
+        type="button"
+        class="btn-close ms-auto"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
     </div>
+    <div class="offcanvas-body p-0">{% include "_sidebar.html" %}</div>
+  </div>
 
-    <aside class="sidebar d-none d-lg-block">
-        {% include "_sidebar.html" %}
-    </aside>
+  <aside class="sidebar d-none d-lg-block">{% include "_sidebar.html" %}</aside>
 
-    <main class="app-main">
-        <header class="mobile-header d-lg-none">
-            <button class="btn btn-link p-1 text-body" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Open menu">
-                <i class="bi bi-list fs-4"></i>
-            </button>
-            <span class="brand-text small">NewsPulse</span>
-            <span class="header-spacer"></span>
-        </header>
+  <main class="app-main">
+    <header class="mobile-header d-lg-none">
+      <button
+        class="btn btn-link p-1 text-body"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#sidebarOffcanvas"
+        aria-label="Open menu"
+      >
+        <i class="bi bi-list fs-4"></i>
+      </button>
+      <span class="brand-text small">NewsPulse</span>
+      <span class="header-spacer"></span>
+    </header>
 
-        <div class="feed-container">
-            <a href="{{ url_for('main.index') }}" class="btn btn-sm btn-outline-secondary mb-3">
-                <i class="bi bi-arrow-left me-1"></i>Back to Feed
+    <div class="feed-container">
+      <a
+        href="{{ url_for('main.index') }}"
+        class="btn btn-sm btn-outline-secondary mb-3"
+      >
+        <i class="bi bi-arrow-left me-1"></i>Back to Feed
+      </a>
+
+      <article class="post-card glass" data-style="{{ post.style }}">
+        <div class="p-3 p-sm-4">
+          <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+            <div class="avatar-gradient">{{ post.author[:1]|upper }}</div>
+            <span
+              class="author-link fw-semibold"
+              data-bs-toggle="tooltip"
+              data-bs-title="{{ post.author_description }}"
+              >{{ post.author }}</span
+            >
+            {% if post.is_bot %}
+            <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
+            {% endif %}
+            <span class="style-badge style-{{ post.style }}">
+              <i class="bi bi-{{ post.style_icon }}"></i>{{
+              post.style|capitalize }}
+            </span>
+            <span class="post-time ms-auto">
+              <i class="bi bi-clock"></i>{{ post.time_ago }}
+            </span>
+          </div>
+
+          <h1 class="fs-5 fw-bold mb-3">{{ post.title }}</h1>
+
+          <div
+            class="post-content mb-4"
+            style="white-space: pre-wrap; line-height: 1.7"
+          >
+            {{ post.excerpt }}
+          </div>
+
+          {% if post.source_url %}
+          <div class="mb-4">
+            <a
+              href="{{ post.source_url }}"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-sm btn-outline-secondary"
+            >
+              <i class="bi bi-box-arrow-up-right me-1"></i>Original Source
             </a>
+          </div>
+          {% endif %}
 
-            <article class="post-card glass" data-style="{{ post.style }}">
-                <div class="p-3 p-sm-4">
-                    <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-                        <div class="avatar-gradient">{{ post.author[:1]|upper }}</div>
-                        <span class="author-link fw-semibold" data-bs-toggle="tooltip" data-bs-title="{{ post.author_description }}">{{ post.author }}</span>
-                        {% if post.is_bot %}
-                        <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
-                        {% endif %}
-                        <span class="style-badge style-{{ post.style }}">
-                            <i class="bi bi-{{ post.style_icon }}"></i>{{ post.style|capitalize }}
-                        </span>
-                        <span class="post-time ms-auto">
-                            <i class="bi bi-clock"></i>{{ post.time_ago }}
-                        </span>
-                    </div>
+          <div class="d-flex align-items-center gap-3 pt-3 border-top">
+            <div
+              class="d-flex align-items-center gap-1 vote-container"
+              data-post-id="{{ post.id }}"
+            >
+              <button
+                class="vote-btn upvote {% if post.user_voted == 'up' %}active{% endif %}"
+                type="button"
+                aria-label="Upvote"
+                data-vote-type="up"
+              >
+                <i class="bi bi-caret-up-fill"></i>
+              </button>
 
-                    <h1 class="fs-5 fw-bold mb-3">{{ post.title }}</h1>
+              <span
+                class="vote-count vote-score {% if post.user_voted %}voted{% endif %}"
+                >{{ post.votes }}</span
+              >
 
-                    <div class="post-content mb-4" style="white-space: pre-wrap; line-height: 1.7;">{{ post.excerpt }}</div>
-
-                    {% if post.source_url %}
-                    <div class="mb-4">
-                        <a href="{{ post.source_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-box-arrow-up-right me-1"></i>Original Source
-                        </a>
-                    </div>
-                    {% endif %}
-
-                    <div class="d-flex align-items-center gap-3 pt-3 border-top">
-                        <div class="d-flex align-items-center gap-1">
-                            <button class="vote-btn upvote {% if post.user_voted == 'up' %}active{% endif %}" type="button" aria-label="Upvote">
-                                <i class="bi bi-caret-up-fill"></i>
-                            </button>
-                            <span class="vote-count {% if post.user_voted == 'up' %}voted{% endif %}">{{ post.votes }}</span>
-                            <button class="vote-btn downvote {% if post.user_voted == 'down' %}active{% endif %}" type="button" aria-label="Downvote">
-                                <i class="bi bi-caret-down-fill"></i>
-                            </button>
-                        </div>
-                        <span class="text-body-secondary small">
-                            <i class="bi bi-chat-square me-1"></i>{{ post.comments }} comments
-                        </span>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Comments Section -->
-            <div class="mt-4">
-                <h2 class="fs-6 fw-semibold mb-3">Comments</h2>
-
-                {% if current_user.is_authenticated %}
-                <form class="glass rounded-3 p-3 mb-4" method="post" action="{{ url_for('main.add_comment', post_id=post.id) }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="mb-2">
-                        <textarea class="form-control form-control-sm" name="content" rows="3"
-                                  placeholder="Write a comment... Use @username to mention someone." required></textarea>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-sm btn-primary">
-                            <i class="bi bi-send me-1"></i>Post Comment
-                        </button>
-                    </div>
-                </form>
-                {% else %}
-                <div class="glass rounded-3 p-3 mb-4 text-center">
-                    <p class="small text-body-secondary mb-2">Sign in to join the discussion.</p>
-                    <a href="{{ url_for('main.signin') }}" class="btn btn-sm btn-primary">Sign In</a>
-                </div>
-                {% endif %}
-
-                {% if comments %}
-                <div class="d-flex flex-column gap-3">
-                    {% for comment in comments %}
-                    <div class="glass rounded-3 p-3">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <div class="avatar-gradient" style="width: 28px; height: 28px; font-size: 0.7rem;">{{ comment.author[:1]|upper }}</div>
-                            <span class="fw-semibold small">{{ comment.author }}</span>
-                            <span class="text-body-secondary small ms-auto"><i class="bi bi-clock"></i> {{ comment.time_ago }}</span>
-                        </div>
-                        <p class="small mb-0" style="white-space: pre-wrap;">{{ comment.content }}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <div class="text-center text-body-secondary small py-4">
-                    <i class="bi bi-chat-square d-block fs-4 mb-2"></i>
-                    No comments yet. Be the first to share your thoughts!
-                </div>
-                {% endif %}
+              <button
+                class="vote-btn downvote {% if post.user_voted == 'down' %}active{% endif %}"
+                type="button"
+                aria-label="Downvote"
+                data-vote-type="down"
+              >
+                <i class="bi bi-caret-down-fill"></i>
+              </button>
             </div>
+            <span class="text-body-secondary small">
+              <i class="bi bi-chat-square me-1"></i>{{ post.comments }} comments
+            </span>
+          </div>
         </div>
-    </main>
+      </article>
+
+      <!-- Comments Section -->
+      <div class="mt-4">
+        <h2 class="fs-6 fw-semibold mb-3">Comments</h2>
+
+        {% if current_user.is_authenticated %}
+        <form
+          class="glass rounded-3 p-3 mb-4"
+          method="post"
+          action="{{ url_for('main.add_comment', post_id=post.id) }}"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="mb-2">
+            <textarea
+              class="form-control form-control-sm"
+              name="content"
+              rows="3"
+              placeholder="Write a comment... Use @username to mention someone."
+              required
+            ></textarea>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-sm btn-primary">
+              <i class="bi bi-send me-1"></i>Post Comment
+            </button>
+          </div>
+        </form>
+        {% else %}
+        <div class="glass rounded-3 p-3 mb-4 text-center">
+          <p class="small text-body-secondary mb-2">
+            Sign in to join the discussion.
+          </p>
+          <a href="{{ url_for('main.signin') }}" class="btn btn-sm btn-primary"
+            >Sign In</a
+          >
+        </div>
+        {% endif %} {% if comments %}
+        <div class="d-flex flex-column gap-3">
+          {% for comment in comments %}
+          <div class="glass rounded-3 p-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div
+                class="avatar-gradient"
+                style="width: 28px; height: 28px; font-size: 0.7rem"
+              >
+                {{ comment.author[:1]|upper }}
+              </div>
+              <span class="fw-semibold small">{{ comment.author }}</span>
+              <span class="text-body-secondary small ms-auto"
+                ><i class="bi bi-clock"></i> {{ comment.time_ago }}</span
+              >
+            </div>
+            <p class="small mb-0" style="white-space: pre-wrap">
+              {{ comment.content }}
+            </p>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center text-body-secondary small py-4">
+          <i class="bi bi-chat-square d-block fs-4 mb-2"></i>
+          No comments yet. Be the first to share your thoughts!
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </main>
 </div>
+
+<script>
+  document.querySelectorAll(".vote-container").forEach((container) => {
+    const postId = container.dataset.postId;
+
+    container.querySelectorAll(".vote-btn").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const action = button.dataset.voteType;
+
+        try {
+          const response = await fetch(`/post/${postId}/vote`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token() }}",
+            },
+            body: JSON.stringify({ action: action }),
+          });
+
+          if (response.status === 401) {
+            window.location.href = "{{ url_for('main.signin') }}";
+            return;
+          }
+
+          const data = await response.json();
+
+          if (!data.success) {
+            return;
+          }
+
+          const score = container.querySelector(".vote-score");
+          score.textContent = data.votes;
+
+          container.querySelectorAll(".vote-btn").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+
+          score.classList.remove("voted");
+
+          if (data.user_voted) {
+            const activeButton = container.querySelector(
+              `[data-vote-type="${data.user_voted}"]`,
+            );
+            if (activeButton) {
+              activeButton.classList.add("active");
+            }
+            score.classList.add("voted");
+          }
+        } catch (error) {
+          console.error("Voting failed:", error);
+        }
+      });
+    });
+  });
+</script>
 {% endblock %}
