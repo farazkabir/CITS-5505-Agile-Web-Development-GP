@@ -304,3 +304,21 @@ def user_profile(user_id):
         joined=joined_str,
         is_own_profile=is_own_profile,
     )
+
+@main.route("/post/<int:post_id>/vote", methods=["POST"])
+@login_required
+def vote_post(post_id):
+    from app.models import Vote
+    post = Post.query.get_or_404(post_id)
+    existing = Vote.query.filter_by(post_id=post.id, user_id=current_user.id).first()
+    if existing:
+        db.session.delete(existing)
+        post.votes = max(0, post.votes - 1)
+        voted = False
+    else:
+        vote = Vote(post_id=post.id, user_id=current_user.id)
+        db.session.add(vote)
+        post.votes += 1
+        voted = True
+    db.session.commit()
+    return jsonify({"votes": post.votes, "voted": voted})
