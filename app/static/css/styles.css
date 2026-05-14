@@ -844,3 +844,19 @@ a:hover {
     font-size: 0.78rem;
     line-height: 1.5;
 }
+
+.user-voted-label {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.7rem;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.user-activity-card {
+    transition: border-color 0.15s ease;
+}
+
+.user-activity-card:hover {
+    border-color: color-mix(in srgb, var(--primary), transparent 60%);
+}
