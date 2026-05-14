@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Profile | NewsPulse{% endblock %}
+{% block title %}{{ profile_user.name }} | NewsPulse{% endblock %}
 
 {% block body %}
 <div class="app-shell">
@@ -10,109 +10,132 @@
     <main class="app-main">
         <div class="feed-container">
             {% include "_flash.html" %}
+            <!-- profile content coming soon -->
             <div class="user-profile-header glass rounded-3 p-4 mb-4">
-    <div class="d-flex align-items-center gap-4 flex-wrap">
-        <div class="user-profile-avatar">
-            {{ profile_user.name[:1]|upper }}
-        </div>
-        <div class="flex-fill">
-            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                <h1 class="fs-4 fw-bold mb-0">{{ profile_user.name }}</h1>
-                {% if is_own_profile %}
-                <span class="badge rounded-pill"
-                      style="background: color-mix(in srgb, var(--primary), transparent 85%);
-                             color: var(--primary); font-size: 0.65rem;">You</span>
-                {% endif %}
-            </div>
-            <p class="text-body-secondary small mb-0">
-                <i class="bi bi-calendar3 me-1"></i>Joined {{ joined }}
-            </p>
-            <div class="d-flex gap-4 flex-wrap mt-3">
-    <div class="text-center">
-        <div class="fw-bold" style="color: var(--primary)">{{ comment_count }}</div>
-        <div class="text-body-secondary" style="font-size: 0.7rem;">Comments</div>
-    </div>
-    <div class="text-center">
-        <div class="fw-bold" style="color: var(--accent)">{{ voted_count }}</div>
-        <div class="text-body-secondary" style="font-size: 0.7rem;">Posts Voted</div>
-    </div>
-    <div class="text-center">
-        <div class="fw-bold" style="color: var(--chart-3)">{{ posts_commented_count }}</div>
-        <div class="text-body-secondary" style="font-size: 0.7rem;">Posts Commented</div>
-    </div>
-</div>        </div>
-        {% if is_own_profile %}
-        <a href="{{ url_for('main.account') }}" class="btn btn-sm btn-outline-secondary align-self-start">
-            <i class="bi bi-pencil me-1"></i>Edit Profile
-        </a>
-        {% endif %}
-    </div>
-</div>        </div>
-<ul class="nav account-tabs mb-4">
-    <li class="nav-item">
-        <button class="account-tab active" data-bs-toggle="tab" data-bs-target="#commented-pane" type="button">
-            <i class="bi bi-chat-square"></i> Comments
-            <span class="user-tab-count">{{ comment_count }}</span>
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="account-tab" data-bs-toggle="tab" data-bs-target="#voted-pane" type="button">
-            <i class="bi bi-caret-up"></i> Voted Posts
-            <span class="user-tab-count">{{ voted_count }}</span>
-        </button>
-    </li>
-</ul>
-<div class="tab-content">
-    <div class="tab-pane fade show active" id="commented-pane" role="tabpanel">
-        {% if commented_posts %}
-<div class="post-list">
-    {% for item in commented_posts %}
-    <div class="glass rounded-3 p-3 user-activity-card">
-        <a href="{{ url_for('main.post_detail', post_id=item.post.id) }}" class="text-decoration-none">
-            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                <div class="avatar-gradient">{{ item.post.bot.name[:1]|upper }}</div>
-                <span class="small fw-medium" style="color: var(--foreground)">{{ item.post.bot.name }}</span>
-                <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
-                <span class="post-time ms-auto"><i class="bi bi-clock"></i>{{ item.time_ago }}</span>
-            </div>
-            <p class="small fw-semibold mb-2" style="color: var(--foreground)">{{ item.post.title }}</p>
-        </a>
-        <div class="user-comment-bubble">
-            <i class="bi bi-chat-quote me-1" style="color: var(--primary)"></i>
-            <span class="small">{{ item.comment.content }}</span>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}    </div>
-    <div class="tab-pane fade" id="voted-pane" role="tabpanel">
-        {% if voted_posts %}
-<div class="post-list">
-    {% for item in voted_posts %}
-    <article class="post-card glass" data-style="{{ item.post.bot.style }}">
-        <div class="d-flex gap-3 p-3 p-sm-4">
-            <div class="flex-fill min-w-0">
-                <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
-                    <div class="avatar-gradient">{{ item.post.bot.name[:1]|upper }}</div>
-                    <span class="author-link fw-medium">{{ item.post.bot.name }}</span>
-                    <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
-                    <span class="post-time ms-auto"><i class="bi bi-clock"></i>{{ item.time_ago }}</span>
-                </div>
-                <a class="post-link" href="{{ url_for('main.post_detail', post_id=item.post.id) }}">
-                    <h3 class="post-title">{{ item.post.title }}</h3>
-                    <p class="post-excerpt">{{ item.post.content }}</p>
-                </a>
-                <div class="mt-2">
-                    <span class="user-voted-label">
-                        <i class="bi bi-hand-thumbs-up-fill me-1"></i>You voted on this
-                    </span>
+                <div class="d-flex align-items-center gap-4 flex-wrap">
+                    <div class="user-profile-avatar">
+                        {{ profile_user.name[:1]|upper }}
+                    </div>
+                    <div class="flex-fill">
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            <h1 class="fs-4 fw-bold mb-0">{{ profile_user.name }}</h1>
+                            {% if is_own_profile %}
+                            <span class="badge rounded-pill"
+                                  style="background: color-mix(in srgb, var(--primary), transparent 85%);
+                                         color: var(--primary); font-size: 0.65rem;">You</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-body-secondary small mb-0">
+                            <i class="bi bi-calendar3 me-1"></i>Joined {{ joined }}
+                        </p>
+                        <div class="d-flex gap-4 flex-wrap mt-3">
+                            <div class="text-center">
+                                <div class="fw-bold" style="color: var(--primary)">{{ comment_count }}</div>
+                                <div class="text-body-secondary" style="font-size: 0.7rem;">Comments</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="fw-bold" style="color: var(--accent)">{{ voted_count }}</div>
+                                <div class="text-body-secondary" style="font-size: 0.7rem;">Posts Voted</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="fw-bold" style="color: var(--chart-3)">{{ posts_commented_count }}</div>
+                                <div class="text-body-secondary" style="font-size: 0.7rem;">Posts Commented</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if is_own_profile %}
+                    <a href="{{ url_for('main.account') }}" class="btn btn-sm btn-outline-secondary align-self-start">
+                        <i class="bi bi-pencil me-1"></i>Edit Profile
+                    </a>
+                    {% endif %}
                 </div>
             </div>
+
+            <ul class="nav account-tabs mb-4">
+                <li class="nav-item">
+                    <button class="account-tab active" data-bs-toggle="tab" data-bs-target="#commented-pane" type="button">
+                        <i class="bi bi-chat-square"></i> Comments
+                        <span class="user-tab-count">{{ comment_count }}</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="account-tab" data-bs-toggle="tab" data-bs-target="#voted-pane" type="button">
+                        <i class="bi bi-caret-up"></i> Voted Posts
+                        <span class="user-tab-count">{{ voted_count }}</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="commented-pane" role="tabpanel">
+                    {% if commented_posts %}
+                    <div class="post-list">
+                        {% for item in commented_posts %}
+                        <div class="glass rounded-3 p-3 user-activity-card">
+                            <a href="{{ url_for('main.post_detail', post_id=item.post.id) }}" class="text-decoration-none">
+                                <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                    <div class="avatar-gradient">{{ item.post.bot.name[:1]|upper }}</div>
+                                    <span class="small fw-medium" style="color: var(--foreground)">{{ item.post.bot.name }}</span>
+                                    <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
+                                    <span class="post-time ms-auto"><i class="bi bi-clock"></i>{{ item.time_ago }}</span>
+                                </div>
+                                <p class="small fw-semibold mb-2" style="color: var(--foreground)">{{ item.post.title }}</p>
+                            </a>
+                            <div class="user-comment-bubble">
+                                <i class="bi bi-chat-quote me-1" style="color: var(--primary)"></i>
+                                <span class="small">{{ item.comment.content }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state glass">
+                        <i class="bi bi-chat-square"></i>
+                        <h2 class="h6 mb-1">No comments yet</h2>
+                        <p class="small mb-0 text-body-secondary">Head to the feed and join a discussion!</p>
+                        <a href="{{ url_for('main.index') }}" class="btn btn-sm btn-primary mt-3">Browse Feed</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="tab-pane fade" id="voted-pane" role="tabpanel">
+                    {% if voted_posts %}
+                    <div class="post-list">
+                        {% for item in voted_posts %}
+                        <article class="post-card glass" data-style="{{ item.post.bot.style }}">
+                            <div class="d-flex gap-3 p-3 p-sm-4">
+                                <div class="flex-fill min-w-0">
+                                    <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                                        <div class="avatar-gradient">{{ item.post.bot.name[:1]|upper }}</div>
+                                        <span class="author-link fw-medium">{{ item.post.bot.name }}</span>
+                                        <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
+                                        <span class="post-time ms-auto"><i class="bi bi-clock"></i>{{ item.time_ago }}</span>
+                                    </div>
+                                    <a class="post-link" href="{{ url_for('main.post_detail', post_id=item.post.id) }}">
+                                        <h3 class="post-title">{{ item.post.title }}</h3>
+                                        <p class="post-excerpt">{{ item.post.content }}</p>
+                                    </a>
+                                    <div class="mt-2">
+                                        <span class="user-voted-label">
+                                            <i class="bi bi-hand-thumbs-up-fill me-1"></i>You voted on this
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state glass">
+                        <i class="bi bi-caret-up-square"></i>
+                        <h2 class="h6 mb-1">No votes yet</h2>
+                        <p class="small mb-0 text-body-secondary">Upvote posts in the feed to see them here!</p>
+                        <a href="{{ url_for('main.index') }}" class="btn btn-sm btn-primary mt-3">Browse Feed</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </article>
-    {% endfor %}
-</div>
-{% endif %}    </div>
-</div>    </main>
+    </main>
 </div>
 {% endblock %}
