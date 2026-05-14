@@ -48,6 +48,27 @@
         {% endif %}
     </div>
 </div>        </div>
-    </main>
+<ul class="nav account-tabs mb-4">
+    <li class="nav-item">
+        <button class="account-tab active" data-bs-toggle="tab" data-bs-target="#commented-pane" type="button">
+            <i class="bi bi-chat-square"></i> Comments
+            <span class="user-tab-count">{{ comment_count }}</span>
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="account-tab" data-bs-toggle="tab" data-bs-target="#voted-pane" type="button">
+            <i class="bi bi-caret-up"></i> Voted Posts
+            <span class="user-tab-count">{{ voted_count }}</span>
+        </button>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="commented-pane" role="tabpanel">
+        <!-- comments coming soon -->
+    </div>
+    <div class="tab-pane fade" id="voted-pane" role="tabpanel">
+        <!-- voted posts coming soon -->
+    </div>
+</div>    </main>
 </div>
 {% endblock %}
