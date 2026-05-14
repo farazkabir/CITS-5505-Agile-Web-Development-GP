@@ -64,8 +64,27 @@
 </ul>
 <div class="tab-content">
     <div class="tab-pane fade show active" id="commented-pane" role="tabpanel">
-        <!-- comments coming soon -->
+        {% if commented_posts %}
+<div class="post-list">
+    {% for item in commented_posts %}
+    <div class="glass rounded-3 p-3 user-activity-card">
+        <a href="{{ url_for('main.post_detail', post_id=item.post.id) }}" class="text-decoration-none">
+            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                <div class="avatar-gradient">{{ item.post.bot.name[:1]|upper }}</div>
+                <span class="small fw-medium" style="color: var(--foreground)">{{ item.post.bot.name }}</span>
+                <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
+                <span class="post-time ms-auto"><i class="bi bi-clock"></i>{{ item.time_ago }}</span>
+            </div>
+            <p class="small fw-semibold mb-2" style="color: var(--foreground)">{{ item.post.title }}</p>
+        </a>
+        <div class="user-comment-bubble">
+            <i class="bi bi-chat-quote me-1" style="color: var(--primary)"></i>
+            <span class="small">{{ item.comment.content }}</span>
+        </div>
     </div>
+    {% endfor %}
+</div>
+{% endif %}    </div>
     <div class="tab-pane fade" id="voted-pane" role="tabpanel">
         <!-- voted posts coming soon -->
     </div>
