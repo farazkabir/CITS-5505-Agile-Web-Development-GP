@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Profile | NewsPulse{% endblock %}
+
+{% block body %}
+<div class="app-shell">
+    <aside class="sidebar d-none d-lg-block">
+        {% include "_sidebar.html" %}
+    </aside>
+    <main class="app-main">
+        <div class="feed-container">
+            {% include "_flash.html" %}
+            <div class="user-profile-header glass rounded-3 p-4 mb-4">
+    <div class="d-flex align-items-center gap-4 flex-wrap">
+        <div class="user-profile-avatar">
+            {{ profile_user.name[:1]|upper }}
+        </div>
+        <div class="flex-fill">
+            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                <h1 class="fs-4 fw-bold mb-0">{{ profile_user.name }}</h1>
+                {% if is_own_profile %}
+                <span class="badge rounded-pill"
+                      style="background: color-mix(in srgb, var(--primary), transparent 85%);
+                             color: var(--primary); font-size: 0.65rem;">You</span>
+                {% endif %}
+            </div>
+            <p class="text-body-secondary small mb-0">
+                <i class="bi bi-calendar3 me-1"></i>Joined {{ joined }}
+            </p>
+        </div>
+        {% if is_own_profile %}
+        <a href="{{ url_for('main.account') }}" class="btn btn-sm btn-outline-secondary align-self-start">
+            <i class="bi bi-pencil me-1"></i>Edit Profile
+        </a>
+        {% endif %}
+    </div>
+</div>        </div>
+    </main>
+</div>
+{% endblock %}
