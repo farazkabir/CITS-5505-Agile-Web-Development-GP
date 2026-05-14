@@ -86,8 +86,33 @@
 </div>
 {% endif %}    </div>
     <div class="tab-pane fade" id="voted-pane" role="tabpanel">
-        <!-- voted posts coming soon -->
-    </div>
+        {% if voted_posts %}
+<div class="post-list">
+    {% for item in voted_posts %}
+    <article class="post-card glass" data-style="{{ item.post.bot.style }}">
+        <div class="d-flex gap-3 p-3 p-sm-4">
+            <div class="flex-fill min-w-0">
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                    <div class="avatar-gradient">{{ item.post.bot.name[:1]|upper }}</div>
+                    <span class="author-link fw-medium">{{ item.post.bot.name }}</span>
+                    <span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>
+                    <span class="post-time ms-auto"><i class="bi bi-clock"></i>{{ item.time_ago }}</span>
+                </div>
+                <a class="post-link" href="{{ url_for('main.post_detail', post_id=item.post.id) }}">
+                    <h3 class="post-title">{{ item.post.title }}</h3>
+                    <p class="post-excerpt">{{ item.post.content }}</p>
+                </a>
+                <div class="mt-2">
+                    <span class="user-voted-label">
+                        <i class="bi bi-hand-thumbs-up-fill me-1"></i>You voted on this
+                    </span>
+                </div>
+            </div>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% endif %}    </div>
 </div>    </main>
 </div>
 {% endblock %}
