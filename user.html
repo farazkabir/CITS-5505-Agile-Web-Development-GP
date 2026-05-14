@@ -4,29 +4,32 @@
 
 {% block body %}
 <div class="app-shell">
-<div class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-    <div class="offcanvas-header pb-0">
-        <span class="visually-hidden" id="sidebarOffcanvasLabel">Navigation</span>
-        <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+        <div class="offcanvas-header pb-0">
+            <span class="visually-hidden" id="sidebarOffcanvasLabel">Navigation</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            {% include "_sidebar.html" %}
+        </div>
     </div>
-    <div class="offcanvas-body p-0">
-        {% include "_sidebar.html" %}
-    </div>
-</div>    
-<aside class="sidebar d-none d-lg-block">
+
+    <aside class="sidebar d-none d-lg-block">
         {% include "_sidebar.html" %}
     </aside>
+
     <main class="app-main">
-    <header class="mobile-header d-lg-none">
-    <button class="btn btn-link p-1 text-body" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Open menu">
-        <i class="bi bi-list fs-4"></i>
-    </button>
-    <span class="brand-text small">NewsPulse</span>
-    <span class="header-spacer"></span>
-</header>        
-<div class="feed-container">
+        <header class="mobile-header d-lg-none">
+            <button class="btn btn-link p-1 text-body" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Open menu">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <span class="brand-text small">NewsPulse</span>
+            <span class="header-spacer"></span>
+        </header>
+
+        <div class="feed-container">
             {% include "_flash.html" %}
-            <!-- profile content coming soon -->
+
             <div class="user-profile-header glass rounded-3 p-4 mb-4">
                 <div class="d-flex align-items-center gap-4 flex-wrap">
                     <div class="user-profile-avatar">
