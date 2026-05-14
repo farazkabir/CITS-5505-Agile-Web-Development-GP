@@ -820,3 +820,27 @@ a:hover {
 .user-profile-header {
     border-left: 3px solid var(--primary);
 }
+
+.user-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.3rem;
+    border-radius: 999px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    background: color-mix(in srgb, var(--primary), transparent 85%);
+    color: var(--primary);
+    margin-left: 0.25rem;
+}
+
+.user-comment-bubble {
+    background: color-mix(in srgb, var(--primary), transparent 92%);
+    border-left: 2px solid var(--primary);
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
