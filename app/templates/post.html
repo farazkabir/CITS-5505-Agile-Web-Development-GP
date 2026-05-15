@@ -169,7 +169,12 @@ endblock %} {% block body %}
               >
                 {{ comment.author[:1]|upper }}
               </div>
-              <span class="fw-semibold small">{{ comment.author }}</span>
+              <a
+                class="fw-semibold small text-decoration-none"
+                href="{{ url_for('main.user_profile', user_id=comment.user_id) }}"
+              >
+                {{ comment.author }}
+              </a>
               <span class="text-body-secondary small ms-auto"
                 ><i class="bi bi-clock"></i> {{ comment.time_ago }}</span
               >

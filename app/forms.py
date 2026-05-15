@@ -46,3 +46,27 @@ class SignInForm(FlaskForm):
     remember = BooleanField("Remember me")
 
     submit = SubmitField("Sign in")
+
+
+class ProfileForm(FlaskForm):
+    display_name = StringField(
+        "Display Name",
+        validators=[DataRequired(), Length(min=2, max=80)]
+    )
+
+    email = StringField(
+        "Email Address",
+        validators=[DataRequired(), Email()]
+    )
+
+    bio = StringField(
+        "Bio",
+        validators=[Length(max=160)]
+    )
+
+    website = StringField(
+        "Website",
+        validators=[Length(max=255)]
+    )
+
+    submit = SubmitField("Save Changes")
