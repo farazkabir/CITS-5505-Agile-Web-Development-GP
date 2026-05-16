@@ -31,19 +31,21 @@ def _time_ago(dt):
     return dt.strftime("%b %d, %Y")
 
 
+def _get_user_vote(post_id, user_id):
+    """Return 'up', 'down', or None for the given user's vote on a post."""
+    vote = Vote.query.filter_by(post_id=post_id, user_id=user_id).first()
+    if vote is None:
+        return None
+    return "up" if vote.value == 1 else "down"
+
+
 def _post_to_dict(post):
     """Convert a Post model instance to the template-friendly dict."""
     bot = post.bot
 
     user_voted = None
     if current_user.is_authenticated:
-        existing_vote = Vote.query.filter_by(
-            post_id=post.id,
-            user_id=current_user.id
-        ).first()
-
-        if existing_vote:
-            user_voted = "up" if existing_vote.value == 1 else "down"
+        user_voted = _get_user_vote(post.id, current_user.id)
 
     return {
         "id": post.id,
@@ -149,19 +151,10 @@ def vote_post(post_id):
 
     db.session.commit()
 
-    final_vote = Vote.query.filter_by(
-        post_id=post.id,
-        user_id=current_user.id
-    ).first()
-
-    user_voted = None
-    if final_vote:
-        user_voted = "up" if final_vote.value == 1 else "down"
-
     return jsonify({
         "success": True,
         "votes": post.votes,
-        "user_voted": user_voted
+        "user_voted": _get_user_vote(post.id, current_user.id),
     })
 
 
