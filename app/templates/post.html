@@ -5,6 +5,7 @@ endblock %} {% block body %}
     class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none"
     tabindex="-1"
     id="sidebarOffcanvas"
+    role="dialog"
     aria-labelledby="sidebarOffcanvasLabel"
   >
     <div class="offcanvas-header pb-0">
@@ -37,6 +38,7 @@ endblock %} {% block body %}
     </header>
 
     <div class="feed-container">
+      {% include "_flash.html" %}
       <a
         href="{{ url_for('main.index') }}"
         class="btn btn-sm btn-outline-secondary mb-3"
@@ -68,19 +70,14 @@ endblock %} {% block body %}
 
           <h1 class="fs-5 fw-bold mb-3">{{ post.title }}</h1>
 
-          <div
-            class="post-content mb-4"
-            style="white-space: pre-wrap; line-height: 1.7"
-          >
-            {{ post.excerpt }}
-          </div>
+          <div class="post-content mb-4" style="white-space: pre-wrap; line-height: 1.7">{{ post.excerpt }}</div>
 
           {% if post.source_url %}
           <div class="mb-4">
             <a
               href="{{ post.source_url }}"
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
               class="btn btn-sm btn-outline-secondary"
             >
               <i class="bi bi-box-arrow-up-right me-1"></i>Original Source
@@ -138,8 +135,10 @@ endblock %} {% block body %}
             <textarea
               class="form-control form-control-sm"
               name="content"
+              id="comment-content"
               rows="3"
-              placeholder="Write a comment... Use @username to mention someone."
+              placeholder="Write a comment..."
+              aria-label="Write a comment"
               required
             ></textarea>
           </div>
@@ -163,12 +162,23 @@ endblock %} {% block body %}
           {% for comment in comments %}
           <div class="glass rounded-3 p-3">
             <div class="d-flex align-items-center gap-2 mb-2">
+              {% if comment.profile_pic %}
+              <img
+                src="{{ url_for('static', filename=comment.profile_pic) }}"
+                alt="{{ comment.author }}'s avatar"
+                class="rounded-circle"
+                width="28"
+                height="28"
+                style="object-fit: cover"
+              />
+              {% else %}
               <div
                 class="avatar-gradient"
                 style="width: 28px; height: 28px; font-size: 0.7rem"
               >
                 {{ comment.author[:1]|upper }}
               </div>
+              {% endif %}
               <a
                 class="fw-semibold small text-decoration-none"
                 href="{{ url_for('main.user_profile', user_id=comment.user_id) }}"
@@ -178,6 +188,19 @@ endblock %} {% block body %}
               <span class="text-body-secondary small ms-auto"
                 ><i class="bi bi-clock"></i> {{ comment.time_ago }}</span
               >
+              {% if current_user.is_authenticated and current_user.id == comment.user_id %}
+              <form
+                method="post"
+                action="{{ url_for('main.delete_comment', post_id=post.id, comment_id=comment.id) }}"
+                class="ms-2"
+                onsubmit="return confirm('Delete this comment?')"
+              >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" aria-label="Delete comment">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+              {% endif %}
             </div>
             <p class="small mb-0" style="white-space: pre-wrap">
               {{ comment.content }}

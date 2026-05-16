@@ -1,13 +1,35 @@
+/**
+ * Client-side form validation module.
+ *
+ * Enhances forms marked with the `needs-client-validation` class by
+ * providing real-time field feedback (password strength, field matching)
+ * and preventing submission when the form is invalid.
+ */
 $(function () {
+    /**
+     * Check whether a password meets the minimum complexity rules.
+     * @param {string} value - The password string.
+     * @returns {boolean} True if at least 8 chars with a letter and digit.
+     */
     function isStrongPassword(value) {
         return value.length >= 8 && /[A-Za-z]/.test(value) && /\d/.test(value);
     }
 
+    /**
+     * Toggle Bootstrap validation classes on a field.
+     * @param {jQuery} $field - The jQuery-wrapped input element.
+     * @param {boolean} isValid - Whether the field currently passes validation.
+     */
     function setValidity($field, isValid) {
         $field.toggleClass("is-invalid", !isValid);
         $field.toggleClass("is-valid", isValid && $field.val().length > 0);
     }
 
+    /**
+     * Run all applicable validation rules on a single field.
+     * @param {HTMLInputElement} field - The raw DOM input element.
+     * @returns {boolean} True if the field is valid.
+     */
     function validateField(field) {
         const $field = $(field);
         let isValid = field.checkValidity();
@@ -39,6 +61,7 @@ $(function () {
         }
     });
 
+    // Re-validate on every keystroke so feedback is immediate
     $(".needs-client-validation input").on("input change", function () {
         validateField(this);
 

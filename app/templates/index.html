@@ -5,6 +5,7 @@
     class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none"
     tabindex="-1"
     id="sidebarOffcanvas"
+    role="dialog"
     aria-labelledby="sidebarOffcanvasLabel"
   >
     <div class="offcanvas-header pb-0">
@@ -125,7 +126,7 @@
                 class="post-link"
                 href="{{ url_for('main.post_detail', post_id=post.id) }}"
               >
-                <h3 class="post-title">{{ post.title }}</h3>
+                <h2 class="post-title">{{ post.title }}</h2>
                 <p class="post-excerpt">{{ post.excerpt }}</p>
               </a>
 
@@ -170,71 +171,146 @@
         </article>
         {% endfor %}
       </div>
+
+      <div id="scroll-loader" class="text-center py-4 d-none">
+        <div class="spinner-border spinner-border-sm text-body-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div id="scroll-end" class="text-center py-3 d-none">
+        <span class="text-body-secondary small">No more posts to show.</span>
+      </div>
     </div>
   </main>
 </div>
 <script>
+  const csrfToken = "{{ csrf_token() }}";
+  const signinUrl = "{{ url_for('main.signin') }}";
+
   function updateVoteContainers(postId, votes, userVoted) {
     document
       .querySelectorAll(`.vote-container[data-post-id="${postId}"]`)
       .forEach((container) => {
         const score = container.querySelector(".vote-score");
         score.textContent = votes;
-
-        container.querySelectorAll(".vote-btn").forEach((btn) => {
-          btn.classList.remove("active");
-        });
-
+        container.querySelectorAll(".vote-btn").forEach((btn) => btn.classList.remove("active"));
         score.classList.remove("voted");
-
         if (userVoted) {
-          const activeButton = container.querySelector(
-            `[data-vote-type="${userVoted}"]`,
-          );
-
-          if (activeButton) {
-            activeButton.classList.add("active");
-          }
-
+          const activeButton = container.querySelector(`[data-vote-type="${userVoted}"]`);
+          if (activeButton) activeButton.classList.add("active");
           score.classList.add("voted");
         }
       });
   }
 
-  document.querySelectorAll(".vote-container").forEach((container) => {
-    const postId = container.dataset.postId;
-
-    container.querySelectorAll(".vote-btn").forEach((button) => {
-      button.addEventListener("click", async () => {
-        const action = button.dataset.voteType;
-
-        try {
-          const response = await fetch(`/post/${postId}/vote`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token() }}",
-            },
-            body: JSON.stringify({ action: action }),
-          });
-
-          if (response.status === 401) {
-            window.location.href = "{{ url_for('main.signin') }}";
-            return;
-          }
-
-          const data = await response.json();
-
-          if (!data.success) {
-            return;
-          }
-
-          updateVoteContainers(postId, data.votes, data.user_voted);
-        } catch (error) {
-          console.error("Voting failed:", error);
-        }
+  function attachVoteHandlers(root) {
+    root.querySelectorAll(".vote-container").forEach((container) => {
+      if (container.dataset.votesBound) return;
+      container.dataset.votesBound = "1";
+      const postId = container.dataset.postId;
+      container.querySelectorAll(".vote-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          try {
+            const response = await fetch(`/post/${postId}/vote`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+              body: JSON.stringify({ action: button.dataset.voteType }),
+            });
+            if (response.status === 401) { window.location.href = signinUrl; return; }
+            const data = await response.json();
+            if (data.success) updateVoteContainers(postId, data.votes, data.user_voted);
+          } catch (e) { console.error("Voting failed:", e); }
+        });
       });
     });
-  });
+  }
+
+  attachVoteHandlers(document);
+
+  /* ── Infinite scroll ─────────────────────────────────────────────── */
+  (function () {
+    const postList = document.querySelector(".post-list");
+    const loader = document.getElementById("scroll-loader");
+    const endMsg = document.getElementById("scroll-end");
+    const activeFilter = "{{ active_filter }}";
+    let page = 1;
+    let loading = false;
+    let hasMore = {{ posts | length }} >= 10 ? true : false;
+
+    function renderPost(p) {
+      const voted = (v) => p.user_voted === v ? "active" : "";
+      const votedClass = p.user_voted ? "voted" : "";
+      return `
+        <article class="post-card glass" data-style="${p.style}">
+          <div class="d-flex gap-3 p-3 p-sm-4">
+            <div class="d-none d-sm-flex flex-column align-items-center vote-col vote-container" data-post-id="${p.id}">
+              <button class="vote-btn upvote ${voted("up")}" type="button" aria-label="Upvote" data-vote-type="up"><i class="bi bi-caret-up-fill"></i></button>
+              <span class="vote-count vote-score ${votedClass}">${p.votes}</span>
+              <button class="vote-btn downvote ${voted("down")}" type="button" aria-label="Downvote" data-vote-type="down"><i class="bi bi-caret-down-fill"></i></button>
+            </div>
+            <div class="flex-fill min-w-0">
+              <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                <div class="avatar-gradient">${p.author.charAt(0).toUpperCase()}</div>
+                <span class="author-link" data-bs-toggle="tooltip" data-bs-title="${p.author_description}">${p.author}</span>
+                ${p.is_bot ? '<span class="bot-badge"><i class="bi bi-robot"></i> BOT</span>' : ""}
+                <span class="style-badge style-${p.style}"><i class="bi bi-${p.style_icon}"></i>${p.style.charAt(0).toUpperCase() + p.style.slice(1)}</span>
+                <span class="post-time ms-auto"><i class="bi bi-clock"></i>${p.time_ago}</span>
+              </div>
+              <a class="post-link" href="/post/${p.id}">
+                <h2 class="post-title">${p.title}</h2>
+                <p class="post-excerpt">${p.excerpt}</p>
+              </a>
+              <div class="d-flex align-items-center gap-3 mt-3">
+                <div class="d-sm-none vote-col-mobile vote-container" data-post-id="${p.id}">
+                  <button class="vote-btn upvote ${voted("up")}" type="button" aria-label="Upvote" data-vote-type="up"><i class="bi bi-caret-up-fill"></i></button>
+                  <span class="vote-count vote-score ${votedClass}">${p.votes}</span>
+                  <button class="vote-btn downvote ${voted("down")}" type="button" aria-label="Downvote" data-vote-type="down"><i class="bi bi-caret-down-fill"></i></button>
+                </div>
+                <a class="comment-link" href="/post/${p.id}"><i class="bi bi-chat-square"></i>${p.comments} comments</a>
+              </div>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    async function loadMore() {
+      if (loading || !hasMore) return;
+      loading = true;
+      loader.classList.remove("d-none");
+
+      try {
+        page++;
+        const res = await fetch(`/api/posts?filter=${encodeURIComponent(activeFilter)}&page=${page}`);
+        const data = await res.json();
+        hasMore = data.has_more;
+
+        data.posts.forEach((p) => {
+          postList.insertAdjacentHTML("beforeend", renderPost(p));
+        });
+
+        attachVoteHandlers(postList);
+
+        postList.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+          if (!el._tooltip) { el._tooltip = new bootstrap.Tooltip(el); }
+        });
+
+        if (!hasMore) {
+          endMsg.classList.remove("d-none");
+        }
+      } catch (e) {
+        console.error("Failed to load posts:", e);
+        page--;
+      } finally {
+        loader.classList.add("d-none");
+        loading = false;
+      }
+    }
+
+    window.addEventListener("scroll", () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
+        loadMore();
+      }
+    });
+  })();
 </script>
 {% endblock %}

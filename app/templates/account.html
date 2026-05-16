@@ -5,6 +5,7 @@ block body %}
     class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none"
     tabindex="-1"
     id="sidebarOffcanvas"
+    role="dialog"
     aria-labelledby="sidebarOffcanvasLabel"
   >
     <div class="offcanvas-header pb-0">
@@ -83,12 +84,55 @@ block body %}
           <div class="glass rounded-3 p-4 mb-3">
             <h2 class="fs-6 fw-semibold mb-3">Profile Picture</h2>
             <div class="d-flex align-items-center gap-4 flex-wrap">
+              {% if user.profile_pic %}
+              <img
+                src="{{ url_for('static', filename=user.profile_pic) }}"
+                alt="{{ user.public_name }}'s profile picture"
+                class="rounded-circle"
+                width="64"
+                height="64"
+                style="object-fit: cover"
+              />
+              {% else %}
               <div class="account-avatar-lg">
-                {{ user.display_name[:1]|upper }}
+                {{ user.public_name[:1]|upper }}
               </div>
-              <p class="text-body-secondary small mb-0">
-                Default profile avatar.
-              </p>
+              {% endif %}
+              <div>
+                <form
+                  action="{{ url_for('main.upload_profile_pic') }}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="d-flex align-items-center gap-2 mb-2"
+                >
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                  <label for="profile-pic-input" class="visually-hidden">Choose profile picture</label>
+                  <input
+                    type="file"
+                    id="profile-pic-input"
+                    name="profile_pic"
+                    accept="image/png,image/jpeg,image/gif,image/webp"
+                    class="form-control form-control-sm"
+                    style="max-width: 220px"
+                    required
+                  />
+                  <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="bi bi-upload me-1"></i>Upload
+                  </button>
+                </form>
+                {% if user.profile_pic %}
+                <form
+                  action="{{ url_for('main.delete_profile_pic') }}"
+                  method="post"
+                  onsubmit="return confirm('Remove your profile picture?')"
+                >
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                  <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash me-1"></i>Remove
+                  </button>
+                </form>
+                {% endif %}
+              </div>
             </div>
           </div>
 
@@ -134,9 +178,7 @@ block body %}
                     rows="2"
                     maxlength="160"
                     placeholder="Tell the feed about yourself…"
-                  >
-                  {{ form.bio.data or '' }}
-                  </textarea>
+                  >{{ form.bio.data or '' }}</textarea>
                   <div class="form-text">
                     {{ (form.bio.data or '')|length }}/160 characters
                   </div>
@@ -214,40 +256,42 @@ block body %}
           <div class="glass rounded-3 p-4">
             <h2 class="fs-6 fw-semibold mb-3">Activity</h2>
 
-            <h3 class="small fw-semibold mb-2">Voted Bots</h3>
-            {% if voted_bots %}
+            <h3 class="small fw-semibold mb-2">Voted Posts</h3>
+            {% if voted_posts %}
             <div class="d-flex flex-column gap-2 mb-3">
-              {% for bot in voted_bots %}
-              <div class="d-flex align-items-center gap-2">
-                <span class="style-badge style-{{ bot.style }}">
-                  <i class="bi bi-{{ bot.style_icon }}"></i>{{ bot.name }}
-                </span>
-                <span class="small text-body-secondary"
-                  >{{ bot.description }}</span
-                >
-              </div>
+              {% for post in voted_posts %}
+              <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="text-decoration-none">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="style-badge style-{{ post.bot.style }}">
+                    <i class="bi bi-{{ post.bot.style_icon }}"></i>{{ post.bot.style|capitalize }}
+                  </span>
+                  <span class="small text-body flex-fill text-truncate">{{ post.title }}</span>
+                  <span class="badge bg-body-secondary text-body-secondary">{{ post.votes }} votes</span>
+                </div>
+              </a>
               {% endfor %}
             </div>
             {% else %}
-            <p class="small text-body-secondary mb-3">No voted bots yet.</p>
+            <p class="small text-body-secondary mb-3">No voted posts yet.</p>
             {% endif %}
 
-            <h3 class="small fw-semibold mb-2">Commented Bots</h3>
-            {% if commented_bots %}
+            <h3 class="small fw-semibold mb-2">Commented Posts</h3>
+            {% if commented_posts %}
             <div class="d-flex flex-column gap-2">
-              {% for bot in commented_bots %}
-              <div class="d-flex align-items-center gap-2">
-                <span class="style-badge style-{{ bot.style }}">
-                  <i class="bi bi-{{ bot.style_icon }}"></i>{{ bot.name }}
-                </span>
-                <span class="small text-body-secondary"
-                  >{{ bot.description }}</span
-                >
-              </div>
+              {% for post in commented_posts %}
+              <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="text-decoration-none">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="style-badge style-{{ post.bot.style }}">
+                    <i class="bi bi-{{ post.bot.style_icon }}"></i>{{ post.bot.style|capitalize }}
+                  </span>
+                  <span class="small text-body flex-fill text-truncate">{{ post.title }}</span>
+                  <span class="badge bg-body-secondary text-body-secondary">{{ post.comments_count }} comments</span>
+                </div>
+              </a>
               {% endfor %}
             </div>
             {% else %}
-            <p class="small text-body-secondary mb-0">No commented bots yet.</p>
+            <p class="small text-body-secondary mb-0">No commented posts yet.</p>
             {% endif %}
           </div>
         </div>

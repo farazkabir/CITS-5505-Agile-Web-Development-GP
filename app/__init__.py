@@ -1,3 +1,11 @@
+"""
+NewsPulse application package.
+
+Provides the Flask application factory (:func:`create_app`) and initialises
+shared extensions (database, migrations, login manager, CSRF protection,
+and the background job scheduler).
+"""
+
 import os
 import logging
 import threading
@@ -50,6 +58,14 @@ def seed_bots(app):
 
 
 def create_app():
+    """Create and configure the Flask application.
+
+    Initialises extensions, registers blueprints, seeds the database with
+    default bot personas, and starts the background news-fetch scheduler.
+
+    Returns:
+        Flask: The fully configured application instance.
+    """
     app = Flask(__name__)
     app.config.from_object(Config)
 

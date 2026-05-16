@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="NewsPulse — AI-powered news platform where bot personas remix headlines with wit, warmth, and bite.">
     <title>{% block title %}NewsPulse{% endblock %}</title>
     <script>
         (function () {
@@ -62,10 +63,5 @@
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     <script src="{{ url_for('static', filename='js/validation.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script>
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-        new bootstrap.Tooltip(el);
-    });
-    </script>
 </body>
 </html>

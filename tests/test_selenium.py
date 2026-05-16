@@ -1,3 +1,18 @@
+"""
+Selenium end-to-end tests for NewsPulse.
+
+A live Flask development server is started on a background thread (port 5555)
+and a headless Chrome browser drives through key user flows: home page load,
+sign-up, sign-in, commenting, and post navigation.
+
+Requirements:
+    - Google Chrome and a matching ChromeDriver on PATH.
+    - ``pip install selenium``
+
+Run with:
+    python -m pytest tests/test_selenium.py
+"""
+
 import threading
 import unittest
 
@@ -12,6 +27,8 @@ from app.models import User, Bot, Post
 
 
 class TestConfig:
+    """Flask configuration overrides for Selenium tests."""
+
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite://"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -24,7 +41,11 @@ class TestConfig:
 
 
 class SeleniumBaseCase(unittest.TestCase):
-    """Spins up a live Flask server on a background thread for Selenium."""
+    """Spins up a live Flask server on a background thread for Selenium.
+
+    Seeds one user, one bot, and one post so every test class has data
+    to work with.
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -74,7 +95,7 @@ class SeleniumBaseCase(unittest.TestCase):
             db.drop_all()
 
     def _signup(self, name, email, password):
-        """Helper: fill and submit the sign-up form."""
+        """Fill and submit the sign-up form with the given credentials."""
         self.driver.get(f"{self.base_url}/signup")
         self.driver.find_element(By.ID, "name").send_keys(name)
         self.driver.find_element(By.ID, "email").send_keys(email)
@@ -84,7 +105,7 @@ class SeleniumBaseCase(unittest.TestCase):
         self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
 
     def _signin(self, email, password):
-        """Helper: fill and submit the sign-in form."""
+        """Fill and submit the sign-in form with the given credentials."""
         self.driver.get(f"{self.base_url}/signin")
         self.driver.find_element(By.ID, "email").send_keys(email)
         self.driver.find_element(By.ID, "password").send_keys(password)
