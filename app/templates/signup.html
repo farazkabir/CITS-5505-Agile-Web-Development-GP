@@ -26,6 +26,7 @@ block content %}
               autocomplete="name"
               required
               minlength="2"
+              maxlength="80"
             />
             <div class="invalid-feedback">
               Please enter at least 2 characters.
@@ -41,6 +42,7 @@ block content %}
               type="email"
               autocomplete="email"
               required
+              pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
             />
             <div class="invalid-feedback">
               Please enter a valid email address.
@@ -93,7 +95,10 @@ block content %}
               required
             />
             <label class="form-check-label" for="terms"
-              >I agree to the <a href="{{ url_for('main.guidelines') }}" target="_blank">community guidelines</a>.</label
+              >I agree to the
+              <a href="{{ url_for('main.guidelines') }}" target="_blank"
+                >community guidelines</a
+              >.</label
             >
             <div class="invalid-feedback">
               You must agree before signing up.
