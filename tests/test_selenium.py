@@ -13,6 +13,8 @@ Run with:
     python -m pytest tests/test_selenium.py
 """
 
+import os
+import tempfile
 import threading
 import unittest
 
@@ -25,12 +27,15 @@ from selenium.webdriver.chrome.options import Options
 from app import create_app, db
 from app.models import User, Bot, Post
 
+_test_db_fd, _test_db_path = tempfile.mkstemp(suffix=".db")
+os.close(_test_db_fd)
+
 
 class TestConfig:
     """Flask configuration overrides for Selenium tests."""
 
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite://"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + _test_db_path
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "test-secret"
     WTF_CSRF_ENABLED = True
@@ -49,8 +54,7 @@ class SeleniumBaseCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.app = create_app()
-        cls.app.config.from_object(TestConfig)
+        cls.app = create_app(TestConfig)
 
         with cls.app.app_context():
             db.create_all()
@@ -93,6 +97,10 @@ class SeleniumBaseCase(unittest.TestCase):
         with cls.app.app_context():
             db.session.remove()
             db.drop_all()
+        try:
+            os.unlink(_test_db_path)
+        except OSError:
+            pass
 
     def _signup(self, name, email, password):
         """Fill and submit the sign-up form with the given credentials."""

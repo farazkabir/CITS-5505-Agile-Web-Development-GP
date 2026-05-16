@@ -57,17 +57,50 @@ def seed_bots(app):
         db.session.commit()
 
 
-def create_app():
+def start_news_scheduler(app):
+    """Start the background news-fetch scheduler and fire an initial cycle.
+
+    Must be called exactly once in the actual worker process (not the
+    Werkzeug reloader parent).
+    """
+    from app.news_service import run_news_cycle
+
+    interval = app.config.get("NEWS_FETCH_INTERVAL", 60)
+    scheduler.add_job(
+        run_news_cycle,
+        "interval",
+        minutes=interval,
+        args=[app],
+        id="news_cycle",
+        replace_existing=True,
+        max_instances=1,
+    )
+    if not scheduler.running:
+        scheduler.start()
+
+    def _startup_fetch():
+        import time
+        time.sleep(8)
+        run_news_cycle(app)
+
+    t = threading.Thread(target=_startup_fetch, daemon=True)
+    t.start()
+
+
+def create_app(config_class=None):
     """Create and configure the Flask application.
 
     Initialises extensions, registers blueprints, seeds the database with
     default bot personas, and starts the background news-fetch scheduler.
 
+    Args:
+        config_class: Optional configuration class. Defaults to :class:`Config`.
+
     Returns:
         Flask: The fully configured application instance.
     """
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(config_class or Config)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -78,34 +111,8 @@ def create_app():
     from app.routes import main
     app.register_blueprint(main)
 
-    # In debug mode, only the reloader child (WERKZEUG_RUN_MAIN) should touch the DB
-    if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        with app.app_context():
-            db.create_all()
-            seed_bots(app)
-
-        from app.news_service import run_news_cycle
-
-        interval = app.config.get("NEWS_FETCH_INTERVAL", 60)
-        scheduler.add_job(
-            run_news_cycle,
-            "interval",
-            minutes=interval,
-            args=[app],
-            id="news_cycle",
-            replace_existing=True,
-            max_instances=1,
-        )
-        if not scheduler.running:
-            scheduler.start()
-
-        # One-shot startup fetch via a thread (avoids APScheduler overlap)
-        def _startup_fetch():
-            import time
-            time.sleep(8)
-            run_news_cycle(app)
-
-        t = threading.Thread(target=_startup_fetch, daemon=True)
-        t.start()
+    with app.app_context():
+        db.create_all()
+        seed_bots(app)
 
     return app
