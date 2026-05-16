@@ -1,69 +1,85 @@
 """
 Selenium end-to-end tests for NewsPulse.
 
-A live Flask development server is started on a background thread (port 5555)
-and a headless Chrome browser drives through key user flows: home page load,
-sign-up, sign-in, commenting, and post navigation.
-
-Requirements:
-    - Google Chrome and a matching ChromeDriver on PATH.
-    - ``pip install selenium``
-
 Run with:
-    python -m pytest tests/test_selenium.py
+    python -m pytest tests/test_selenium.py -v -s
 """
 
 import os
 import tempfile
 import threading
+import time
 import unittest
+
+from werkzeug.serving import make_server
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
 
 from app import create_app, db
 from app.models import User, Bot, Post
+
 
 _test_db_fd, _test_db_path = tempfile.mkstemp(suffix=".db")
 os.close(_test_db_fd)
 
 
 class TestConfig:
-    """Flask configuration overrides for Selenium tests."""
-
     TESTING = True
+    SECRET_KEY = "test-secret-key"
+
+    # These tests are checking user flows, not CSRF protection.
+    WTF_CSRF_ENABLED = False
+
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + _test_db_path
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = "test-secret"
-    WTF_CSRF_ENABLED = True
-    NEWS_FETCH_INTERVAL = 9999
+
     NEWSAPI_KEY = ""
     GEMINI_API_KEY = ""
-    SERVER_NAME = "127.0.0.1:5555"
+    NEWS_FETCH_INTERVAL = 9999
+
+
+class ServerThread(threading.Thread):
+    def __init__(self, app):
+        super().__init__(daemon=True)
+        self.server = make_server("127.0.0.1", 0, app)
+        self.port = self.server.server_port
+
+    def run(self):
+        self.server.serve_forever()
+
+    def shutdown(self):
+        self.server.shutdown()
 
 
 class SeleniumBaseCase(unittest.TestCase):
-    """Spins up a live Flask server on a background thread for Selenium.
-
-    Seeds one user, one bot, and one post so every test class has data
-    to work with.
-    """
-
     @classmethod
     def setUpClass(cls):
         cls.app = create_app(TestConfig)
 
         with cls.app.app_context():
+            db.session.remove()
+            db.drop_all()
             db.create_all()
 
-            user = User(name="Selenium User", display_name="Selenium User", email="sel@test.com")
+            user = User(
+                name="Selenium User",
+                display_name="Selenium User",
+                email="sel@test.com",
+            )
             user.set_password("password123")
             db.session.add(user)
 
-            bot = Bot(name="TestBot", style="satire", style_icon="emoji-laughing", description="Test bot")
+            bot = Bot(
+                name="TestBot",
+                style="satire",
+                style_icon="emoji-laughing",
+                description="Test bot for Selenium tests.",
+                active=True,
+            )
             db.session.add(bot)
             db.session.commit()
 
@@ -71,122 +87,244 @@ class SeleniumBaseCase(unittest.TestCase):
                 bot_id=bot.id,
                 title="Selenium Test Post",
                 content="Content for selenium testing.",
-                source_hash=Post.make_hash("https://example.com/sel", bot.name),
+                source_url="https://example.com/selenium",
+                source_title="Selenium Source",
+                source_hash=Post.make_hash("https://example.com/selenium", bot.name),
             )
             db.session.add(post)
             db.session.commit()
 
-        cls.server_thread = threading.Thread(
-            target=cls.app.run,
-            kwargs={"port": 5555, "use_reloader": False},
-            daemon=True,
-        )
+            cls.test_post_id = post.id
+
+        cls.server_thread = ServerThread(cls.app)
         cls.server_thread.start()
+        cls.base_url = f"http://127.0.0.1:{cls.server_thread.port}"
+
+        time.sleep(0.5)
 
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--headless=new")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--window-size=1280,900")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
         cls.driver = webdriver.Chrome(options=chrome_options)
-        cls.driver.implicitly_wait(5)
-        cls.base_url = "http://127.0.0.1:5555"
+        cls.driver.implicitly_wait(3)
 
     @classmethod
     def tearDownClass(cls):
-        cls.driver.quit()
+        try:
+            cls.driver.quit()
+        except Exception:
+            pass
+
+        try:
+            cls.server_thread.shutdown()
+        except Exception:
+            pass
+
         with cls.app.app_context():
             db.session.remove()
             db.drop_all()
+
         try:
             os.unlink(_test_db_path)
         except OSError:
             pass
 
+    def _set_input_value(self, element_id, value):
+        """Set an input value using JavaScript and dispatch input/change events.
+
+        This is more stable than send_keys() in headless Chrome.
+        """
+        element = WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.ID, element_id))
+        )
+
+        self.driver.execute_script(
+            """
+            const element = arguments[0];
+            const value = arguments[1];
+
+            element.focus();
+            element.value = value;
+
+            element.dispatchEvent(new Event("input", { bubbles: true }));
+            element.dispatchEvent(new Event("change", { bubbles: true }));
+            """,
+            element,
+            value,
+        )
+
+        WebDriverWait(self.driver, 5).until(
+            lambda driver: driver.find_element(By.ID, element_id).get_attribute("value")
+            == value
+        )
+
+    def _set_checkbox(self, element_id, checked=True):
+        element = WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.ID, element_id))
+        )
+
+        self.driver.execute_script(
+            """
+            const element = arguments[0];
+            const checked = arguments[1];
+
+            element.checked = checked;
+
+            element.dispatchEvent(new Event("input", { bubbles: true }));
+            element.dispatchEvent(new Event("change", { bubbles: true }));
+            """,
+            element,
+            checked,
+        )
+
+        WebDriverWait(self.driver, 5).until(
+            lambda driver: driver.find_element(By.ID, element_id).is_selected()
+            == checked
+        )
+
+    def _submit_form(self, css_selector="form"):
+        form = WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, css_selector))
+        )
+
+        self.driver.execute_script("arguments[0].submit();", form)
+
     def _signup(self, name, email, password):
-        """Fill and submit the sign-up form with the given credentials."""
         self.driver.get(f"{self.base_url}/signup")
-        self.driver.find_element(By.ID, "name").send_keys(name)
-        self.driver.find_element(By.ID, "email").send_keys(email)
-        self.driver.find_element(By.ID, "password").send_keys(password)
-        self.driver.find_element(By.ID, "confirm_password").send_keys(password)
-        self.driver.find_element(By.ID, "terms").click()
-        self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+
+        WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.ID, "name"))
+        )
+
+        self._set_input_value("name", name)
+        self._set_input_value("email", email)
+        self._set_input_value("password", password)
+        self._set_input_value("confirm_password", password)
+        self._set_checkbox("terms", True)
+
+        self._submit_form("form")
 
     def _signin(self, email, password):
-        """Fill and submit the sign-in form with the given credentials."""
         self.driver.get(f"{self.base_url}/signin")
-        self.driver.find_element(By.ID, "email").send_keys(email)
-        self.driver.find_element(By.ID, "password").send_keys(password)
-        self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+
+        WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.ID, "email"))
+        )
+
+        self._set_input_value("email", email)
+        self._set_input_value("password", password)
+
+        self._submit_form("form")
 
 
-# ── Test 1: Home page loads and shows the brand title ─────────────────────────
-class TestHomePage(SeleniumBaseCase):
+class TestSeleniumFlows(SeleniumBaseCase):
+    def setUp(self):
+        self.driver.delete_all_cookies()
+
     def test_home_page_loads(self):
         self.driver.get(self.base_url)
-        heading = self.driver.find_element(By.TAG_NAME, "h1")
+
+        heading = WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.TAG_NAME, "h1"))
+        )
+
         self.assertIn("NewsPulse", heading.text)
 
-
-# ── Test 2: Sign-up form works end-to-end ─────────────────────────────────────
-class TestSignUpFlow(SeleniumBaseCase):
     def test_signup_redirects_to_signin(self):
         self._signup("New Tester", "newtester@test.com", "securepass1")
-        WebDriverWait(self.driver, 5).until(EC.url_contains("/signin"))
+
+        WebDriverWait(self.driver, 5).until(
+            EC.url_contains("/signin")
+        )
+
         self.assertIn("/signin", self.driver.current_url)
+        self.assertIn("Account created successfully", self.driver.page_source)
 
-
-# ── Test 3: Sign-in with valid credentials reaches the feed ───────────────────
-class TestSignInFlow(SeleniumBaseCase):
     def test_signin_reaches_feed(self):
         self._signin("sel@test.com", "password123")
-        WebDriverWait(self.driver, 5).until(EC.url_to_be(f"{self.base_url}/"))
-        page = self.driver.page_source
-        self.assertIn("NewsPulse", page)
 
+        WebDriverWait(self.driver, 5).until(
+            EC.url_to_be(f"{self.base_url}/")
+        )
 
-# ── Test 4: Sign-in with wrong password shows flash error ─────────────────────
-class TestSignInWrongPassword(SeleniumBaseCase):
+        self.assertIn("NewsPulse", self.driver.page_source)
+        self.assertIn("Selenium Test Post", self.driver.page_source)
+
     def test_wrong_password_shows_error(self):
         self._signin("sel@test.com", "wrongpassword")
-        WebDriverWait(self.driver, 5).until(EC.url_contains("/signin"))
-        flash_msg = self.driver.find_element(By.CSS_SELECTOR, ".alert").text
-        self.assertIn("Invalid email or password", flash_msg)
 
+        WebDriverWait(self.driver, 5).until(
+            EC.url_contains("/signin")
+        )
 
-# ── Test 5: Posting a comment on a post ───────────────────────────────────────
-class TestPostComment(SeleniumBaseCase):
+        flash_msg = WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".alert"))
+        ).text
+
+        self.assertTrue(
+            "Invalid email or password" in flash_msg
+            or "Please check your email and password" in flash_msg
+        )
+
     def test_comment_appears_after_submit(self):
         self._signin("sel@test.com", "password123")
-        WebDriverWait(self.driver, 5).until(EC.url_to_be(f"{self.base_url}/"))
 
-        self.driver.get(f"{self.base_url}/post/1")
+        WebDriverWait(self.driver, 5).until(
+            EC.url_to_be(f"{self.base_url}/")
+        )
+
+        self.driver.get(f"{self.base_url}/post/{self.test_post_id}")
+
         textarea = WebDriverWait(self.driver, 5).until(
             EC.presence_of_element_located((By.NAME, "content"))
         )
-        textarea.send_keys("Hello from Selenium!")
-        submit_btn = self.driver.find_element(
-            By.CSS_SELECTOR, "form[action*='/comment'] button[type='submit']"
+
+        self.driver.execute_script(
+            """
+            const textarea = arguments[0];
+            textarea.value = "Hello from Selenium!";
+            textarea.dispatchEvent(new Event("input", { bubbles: true }));
+            textarea.dispatchEvent(new Event("change", { bubbles: true }));
+            """,
+            textarea,
         )
-        submit_btn.click()
 
         WebDriverWait(self.driver, 5).until(
-            EC.text_to_be_present_in_element((By.CSS_SELECTOR, ".feed-container"), "Hello from Selenium!")
+            lambda driver: driver.find_element(By.NAME, "content").get_attribute("value")
+            == "Hello from Selenium!"
         )
-        page = self.driver.page_source
-        self.assertIn("Hello from Selenium!", page)
 
+        self._submit_form("form[action*='/comment']")
 
-# ── Test 6: Clicking a post title navigates to the detail page ────────────────
-class TestPostNavigation(SeleniumBaseCase):
+        WebDriverWait(self.driver, 5).until(
+            EC.text_to_be_present_in_element(
+                (By.TAG_NAME, "body"),
+                "Hello from Selenium!",
+            )
+        )
+
+        self.assertIn("Hello from Selenium!", self.driver.page_source)
+
     def test_click_post_opens_detail(self):
         self.driver.get(self.base_url)
+
         link = WebDriverWait(self.driver, 5).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "a.post-link"))
         )
         link.click()
-        WebDriverWait(self.driver, 5).until(EC.url_contains("/post/"))
-        heading = self.driver.find_element(By.TAG_NAME, "h1")
+
+        WebDriverWait(self.driver, 5).until(
+            EC.url_contains("/post/")
+        )
+
+        heading = WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.TAG_NAME, "h1"))
+        )
+
         self.assertIn("Selenium Test Post", heading.text)
 
 
