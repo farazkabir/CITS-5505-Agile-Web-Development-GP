@@ -10,10 +10,18 @@ from app import db, login_manager
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
+    # Original name entered during sign up
     name = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
 
+    # Public display name shown on profile/comments
+    display_name = db.Column(db.String(80), nullable=True)
+
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256), nullable=False)
+
+    # Public profile fields
+    bio = db.Column(db.String(160), default="")
+    website = db.Column(db.String(255), default="")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -61,6 +69,23 @@ class Post(db.Model):
         raw = f"{url}|{bot_name}"
         return hashlib.sha256(raw.encode()).hexdigest()
 
+class Vote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    # 1 = upvote, -1 = downvote
+    value = db.Column(db.Integer, nullable=False)
+
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    post = db.relationship("Post", backref=db.backref("vote_records", lazy="dynamic"))
+    user = db.relationship("User", backref=db.backref("votes", lazy="dynamic"))
+
+    __table_args__ = (
+        db.UniqueConstraint("post_id", "user_id", name="unique_user_post_vote"),
+    )
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

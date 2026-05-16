@@ -1,352 +1,267 @@
-{% extends "base.html" %}
-
-{% block title %}Account | NewsPulse{% endblock %}
-
-{% block body %}
+{% extends "base.html" %} {% block title %}Account | NewsPulse{% endblock %} {%
+block body %}
 <div class="app-shell">
-    <div class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-        <div class="offcanvas-header pb-0">
-            <span class="visually-hidden" id="sidebarOffcanvasLabel">Navigation</span>
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            {% include "_sidebar.html" %}
-        </div>
+  <div
+    class="offcanvas offcanvas-start sidebar-offcanvas d-lg-none"
+    tabindex="-1"
+    id="sidebarOffcanvas"
+    aria-labelledby="sidebarOffcanvasLabel"
+  >
+    <div class="offcanvas-header pb-0">
+      <span class="visually-hidden" id="sidebarOffcanvasLabel">Navigation</span>
+      <button
+        type="button"
+        class="btn-close ms-auto"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
     </div>
+    <div class="offcanvas-body p-0">{% include "_sidebar.html" %}</div>
+  </div>
 
-    <aside class="sidebar d-none d-lg-block">
-        {% include "_sidebar.html" %}
-    </aside>
+  <aside class="sidebar d-none d-lg-block">{% include "_sidebar.html" %}</aside>
 
-    <main class="app-main">
-        <header class="mobile-header d-lg-none">
-            <button class="btn btn-link p-1 text-body" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Open menu">
-                <i class="bi bi-list fs-4"></i>
-            </button>
-            <span class="brand-text small">NewsPulse</span>
-            <span class="header-spacer"></span>
-        </header>
+  <main class="app-main">
+    <header class="mobile-header d-lg-none">
+      <button
+        class="btn btn-link p-1 text-body"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#sidebarOffcanvas"
+        aria-label="Open menu"
+      >
+        <i class="bi bi-list fs-4"></i>
+      </button>
+      <span class="brand-text small">NewsPulse</span>
+      <span class="header-spacer"></span>
+    </header>
 
-        <div class="feed-container">
-            {% include "_flash.html" %}
+    <div class="feed-container">
+      {% include "_flash.html" %}
 
-            <h1 class="fs-5 fw-bold mb-1">Account</h1>
-            <p class="text-body-secondary small mb-4">Manage your profile, preferences and security settings.</p>
+      <h1 class="fs-5 fw-bold mb-1">Account</h1>
+      <p class="text-body-secondary small mb-4">
+        Manage your public profile information.
+      </p>
 
-            <!-- Tab nav -->
-            <ul class="nav account-tabs mb-4" id="accountTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="account-tab active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-pane" type="button" role="tab">
-                        <i class="bi bi-person"></i> Profile
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="account-tab" id="preferences-tab" data-bs-toggle="tab" data-bs-target="#preferences-pane" type="button" role="tab">
-                        <i class="bi bi-sliders"></i> Preferences
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="account-tab" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-pane" type="button" role="tab">
-                        <i class="bi bi-shield-lock"></i> Security
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="account-tab" id="danger-tab" data-bs-toggle="tab" data-bs-target="#danger-pane" type="button" role="tab">
-                        <i class="bi bi-exclamation-triangle"></i> Danger Zone
-                    </button>
-                </li>
-            </ul>
+      <!-- Tab nav -->
+      <ul class="nav account-tabs mb-4" id="accountTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="account-tab active"
+            id="profile-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#profile-pane"
+            type="button"
+            role="tab"
+          >
+            <i class="bi bi-person"></i> Profile
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="account-tab"
+            id="activity-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#activity-pane"
+            type="button"
+            role="tab"
+          >
+            <i class="bi bi-activity"></i> Activity
+          </button>
+        </li>
+      </ul>
 
-            <div class="tab-content">
-
-                <!-- PROFILE TAB -->
-                <div class="tab-pane fade show active" id="profile-pane" role="tabpanel">
-                    <!-- Avatar section -->
-                    <div class="glass rounded-3 p-4 mb-3">
-                        <h2 class="fs-6 fw-semibold mb-3">Profile Picture</h2>
-                        <div class="d-flex align-items-center gap-4 flex-wrap">
-                            <div class="account-avatar-lg" id="avatarPreview">
-                                {{ user.username[:1]|upper }}
-                            </div>
-                            <div>
-                                <div class="d-flex gap-2 mb-2">
-                                    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="document.getElementById('avatarUpload').click()">
-                                        <i class="bi bi-upload me-1"></i>Upload photo
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="resetAvatar()">
-                                        Remove
-                                    </button>
-                                </div>
-                                <input type="file" id="avatarUpload" accept="image/*" class="d-none" onchange="previewAvatar(this)">
-                                <p class="text-body-secondary mb-0" style="font-size: 0.72rem;">JPG or PNG, max 2MB. Recommended 200×200px.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Profile details -->
-                    <div class="glass rounded-3 p-4 mb-3">
-                        <h2 class="fs-6 fw-semibold mb-3">Profile Details</h2>
-                        <form action="{{ url_for('main.update_profile') }}" method="post" class="needs-client-validation" novalidate>
-                            <div class="row g-3">
-                                <div class="col-sm-6">
-                                    <label class="form-label small fw-medium" for="displayName">Display Name</label>
-                                    <input class="form-control form-control-sm" id="displayName" name="display_name"
-                                           type="text" value="{{ user.display_name }}" required minlength="2" maxlength="40">
-                                    <div class="invalid-feedback">Display name is required.</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="form-label small fw-medium" for="username">Username</label>
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text text-body-secondary">@</span>
-                                        <input class="form-control" id="username" name="username"
-                                               type="text" value="{{ user.username }}" required minlength="3" maxlength="24"
-                                               pattern="[A-Za-z0-9_]+">
-                                    </div>
-                                    <div class="invalid-feedback">3–24 chars, letters/numbers/underscore only.</div>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label small fw-medium" for="bio">Bio <span class="text-body-secondary fw-normal">(optional)</span></label>
-                                    <textarea class="form-control form-control-sm" id="bio" name="bio"
-                                              rows="2" maxlength="160" placeholder="Tell the feed about yourself…">{{ user.bio }}</textarea>
-                                    <div class="form-text">{{ user.bio|length }}/160 characters</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="form-label small fw-medium" for="email">Email Address</label>
-                                    <input class="form-control form-control-sm" id="email" name="email"
-                                           type="email" value="{{ user.email }}" required autocomplete="email">
-                                    <div class="invalid-feedback">Please enter a valid email address.</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="form-label small fw-medium" for="website">Website <span class="text-body-secondary fw-normal">(optional)</span></label>
-                                    <input class="form-control form-control-sm" id="website" name="website"
-                                           type="url" value="{{ user.website }}" placeholder="https://yoursite.com">
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <button type="submit" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-check-lg me-1"></i>Save Changes
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Stats -->
-                    <div class="glass rounded-3 p-4">
-                        <h2 class="fs-6 fw-semibold mb-3">Your Stats</h2>
-                        <div class="row g-3">
-                            {% for stat in stats %}
-                            <div class="col-6 col-md-3">
-                                <div class="text-center py-2">
-                                    <div class="fs-5 fw-bold" style="color: var(--primary)">{{ stat.value }}</div>
-                                    <div class="text-body-secondary" style="font-size: 0.72rem;">{{ stat.label }}</div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PREFERENCES TAB -->
-                <div class="tab-pane fade" id="preferences-pane" role="tabpanel">
-                    <div class="glass rounded-3 p-4 mb-3">
-                        <h2 class="fs-6 fw-semibold mb-3">Feed Preferences</h2>
-                        <form action="{{ url_for('main.update_preferences') }}" method="post">
-                            <div class="mb-3">
-                                <label class="form-label small fw-medium mb-2">Default Feed Filter</label>
-                                <div class="d-flex flex-wrap gap-2">
-                                    {% for key, label in [('all','All'), ('breaking','Breaking'), ('satire','Satire'), ('meme','Meme'), ('wholesome','Wholesome')] %}
-                                    <div class="form-check form-check-inline ms-0">
-                                        <input class="form-check-input" type="radio" name="default_filter"
-                                               id="pref-filter-{{ key }}" value="{{ key }}"
-                                               {% if user.prefs.default_filter == key %}checked{% endif %}>
-                                        <label class="form-check-label small" for="pref-filter-{{ key }}">{{ label }}</label>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <hr class="my-3">
-                            <h3 class="fs-6 fw-medium mb-3">Notifications</h3>
-                            {% set notif_options = [
-                                ('notify_votes', 'Notify me when my posts receive votes'),
-                                ('notify_comments', 'Notify me when someone comments on my posts'),
-                                ('notify_bots', 'Notify me when my bots generate a new post'),
-                                ('notify_digest', 'Send me a daily digest email'),
-                            ] %}
-                            {% for name, label in notif_options %}
-                            <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" role="switch"
-                                       id="{{ name }}" name="{{ name }}"
-                                       {% if user.prefs[name] %}checked{% endif %}>
-                                <label class="form-check-label small" for="{{ name }}">{{ label }}</label>
-                            </div>
-                            {% endfor %}
-                            <hr class="my-3">
-                            <h3 class="fs-6 fw-medium mb-3">Appearance</h3>
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="small">Theme</span>
-                                <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary theme-toggle px-3">
-                                        <i class="bi bi-moon theme-toggle-icon me-1"></i>
-                                        <span class="theme-toggle-label">Dark mode</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <button type="submit" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-check-lg me-1"></i>Save Preferences
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- SECURITY TAB -->
-                <div class="tab-pane fade" id="security-pane" role="tabpanel">
-                    <div class="glass rounded-3 p-4 mb-3">
-                        <h2 class="fs-6 fw-semibold mb-3">Change Password</h2>
-                        <form action="{{ url_for('main.update_password') }}" method="post" class="needs-client-validation" novalidate>
-                            <div class="mb-3">
-                                <label class="form-label small fw-medium" for="currentPassword">Current Password</label>
-                                <input class="form-control form-control-sm" id="currentPassword" name="current_password"
-                                       type="password" autocomplete="current-password" required>
-                                <div class="invalid-feedback">Please enter your current password.</div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label small fw-medium" for="newPassword">New Password</label>
-                                <input class="form-control form-control-sm" id="newPassword" name="new_password"
-                                       type="password" autocomplete="new-password" required minlength="8">
-                                <div class="form-text">At least 8 characters.</div>
-                                <div class="invalid-feedback">Password must be at least 8 characters.</div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label small fw-medium" for="confirmPassword">Confirm New Password</label>
-                                <input class="form-control form-control-sm" id="confirmPassword" name="confirm_password"
-                                       type="password" autocomplete="new-password" required minlength="8">
-                                <div class="invalid-feedback">Passwords do not match.</div>
-                            </div>
-                            <button type="submit" class="btn btn-sm btn-primary">Update Password</button>
-                        </form>
-                    </div>
-
-                    <div class="glass rounded-3 p-4">
-                        <h2 class="fs-6 fw-semibold mb-1">Active Sessions</h2>
-                        <p class="text-body-secondary small mb-3">Devices currently signed in to your account.</p>
-                        {% for session in sessions %}
-                        <div class="d-flex align-items-center gap-3 py-2 {% if not loop.last %}border-bottom{% endif %}">
-                            <i class="bi bi-{{ 'phone' if session.device == 'mobile' else 'laptop' }} fs-5 text-body-secondary flex-shrink-0"></i>
-                            <div class="flex-fill">
-                                <div class="small fw-medium">{{ session.label }}</div>
-                                <div class="text-body-secondary" style="font-size: 0.7rem;">{{ session.location }} · {{ session.last_seen }}</div>
-                            </div>
-                            {% if session.current %}
-                            <span class="badge rounded-pill" style="background: color-mix(in srgb, var(--chart-3), transparent 80%); color: var(--chart-3); font-size: 0.65rem;">Current</span>
-                            {% else %}
-                            <button class="btn btn-sm btn-outline-secondary py-0 px-2" type="button">Revoke</button>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- DANGER ZONE TAB -->
-                <div class="tab-pane fade" id="danger-pane" role="tabpanel">
-                    <div class="glass rounded-3 p-4 mb-3" style="border-color: color-mix(in srgb, var(--destructive), transparent 70%)">
-                        <h2 class="fs-6 fw-semibold mb-1" style="color: var(--destructive)">Export My Data</h2>
-                        <p class="text-body-secondary small mb-3">Download a copy of all your posts, votes, and account information.</p>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-download me-1"></i>Request Data Export
-                        </button>
-                    </div>
-                    <div class="glass rounded-3 p-4" style="border-color: color-mix(in srgb, var(--destructive), transparent 60%)">
-                        <h2 class="fs-6 fw-semibold mb-1" style="color: var(--destructive)">Delete Account</h2>
-                        <p class="text-body-secondary small mb-3">Permanently delete your account, all your posts, bots, and data. <strong>This cannot be undone.</strong></p>
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                            <i class="bi bi-trash me-1"></i>Delete My Account
-                        </button>
-                    </div>
-                </div>
-
-            </div><!-- /tab-content -->
-        </div>
-    </main>
-</div>
-
-<!-- Delete Account Modal -->
-<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass border-0 shadow-lg">
-            <div class="modal-header border-bottom">
-                <h5 class="modal-title fs-6 fw-semibold" id="deleteAccountModalLabel" style="color: var(--destructive)">
-                    <i class="bi bi-exclamation-triangle me-2"></i>Delete Account
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="tab-content">
+        <!-- PROFILE TAB -->
+        <div
+          class="tab-pane fade show active"
+          id="profile-pane"
+          role="tabpanel"
+        >
+          <!-- Avatar section -->
+          <div class="glass rounded-3 p-4 mb-3">
+            <h2 class="fs-6 fw-semibold mb-3">Profile Picture</h2>
+            <div class="d-flex align-items-center gap-4 flex-wrap">
+              <div class="account-avatar-lg">
+                {{ user.display_name[:1]|upper }}
+              </div>
+              <p class="text-body-secondary small mb-0">
+                Default profile avatar.
+              </p>
             </div>
-            <div class="modal-body">
-                <p class="small text-body-secondary">This will permanently delete your account, posts, bots, and all associated data. Type your username to confirm.</p>
-                <input class="form-control form-control-sm" id="deleteConfirmInput" type="text"
-                       placeholder="Type your username to confirm">
-            </div>
-            <div class="modal-footer border-top">
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn" disabled
-                        onclick="window.location='{{ url_for('main.delete_account') }}'">
-                    Delete My Account
+          </div>
+
+          <!-- Profile details -->
+          <div class="glass rounded-3 p-4 mb-3">
+            <h2 class="fs-6 fw-semibold mb-3">Profile Details</h2>
+            <form
+              action="{{ url_for('main.update_profile') }}"
+              method="post"
+              class="needs-client-validation"
+              novalidate
+            >
+              {{ form.hidden_tag() }}
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-medium" for="displayName"
+                    >Display Name</label
+                  >
+                  <input
+                    class="form-control form-control-sm"
+                    id="displayName"
+                    name="display_name"
+                    type="text"
+                    value="{{ form.display_name.data or '' }}"
+                    required
+                    minlength="2"
+                    maxlength="80"
+                  />
+                  <div class="invalid-feedback">Display name is required.</div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label small fw-medium" for="bio"
+                    >Bio
+                    <span class="text-body-secondary fw-normal"
+                      >(optional)</span
+                    ></label
+                  >
+                  <textarea
+                    class="form-control form-control-sm"
+                    id="bio"
+                    name="bio"
+                    rows="2"
+                    maxlength="160"
+                    placeholder="Tell the feed about yourself…"
+                  >
+                  {{ form.bio.data or '' }}
+                  </textarea>
+                  <div class="form-text">
+                    {{ (form.bio.data or '')|length }}/160 characters
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-medium" for="email"
+                    >Email Address</label
+                  >
+                  <input
+                    class="form-control form-control-sm"
+                    id="email"
+                    name="email"
+                    type="email"
+                    value="{{ form.email.data or '' }}"
+                    required
+                    autocomplete="email"
+                  />
+                  <div class="invalid-feedback">
+                    Please enter a valid email address.
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-medium" for="website"
+                    >Website
+                    <span class="text-body-secondary fw-normal"
+                      >(optional)</span
+                    ></label
+                  >
+                  <input
+                    class="form-control form-control-sm"
+                    id="website"
+                    name="website"
+                    type="url"
+                    value="{{ form.website.data or '' }}"
+                    placeholder="https://yoursite.com"
+                  />
+                </div>
+              </div>
+              <div class="mt-3">
+                <button type="submit" class="btn btn-sm btn-primary">
+                  <i class="bi bi-check-lg me-1"></i>Save Changes
                 </button>
-            </div>
+                <a
+                  href="{{ url_for('main.user_profile', user_id=current_user.id) }}"
+                  class="btn btn-sm btn-outline-secondary ms-2"
+                >
+                  View Public Profile
+                </a>
+              </div>
+            </form>
+          </div>
         </div>
+        <!-- ACTIVITY TAB -->
+        <div class="tab-pane fade" id="activity-pane" role="tabpanel">
+          <!-- Stats -->
+          <div class="glass rounded-3 p-4 mb-3">
+            <h2 class="fs-6 fw-semibold mb-3">Your Stats</h2>
+            <div class="row g-3">
+              {% for stat in stats %}
+              <div class="col-6 col-md-4">
+                <div class="text-center py-2">
+                  <div class="fs-5 fw-bold" style="color: var(--primary)">
+                    {{ stat.value }}
+                  </div>
+                  <div class="text-body-secondary" style="font-size: 0.72rem">
+                    {{ stat.label }}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Activity -->
+          <div class="glass rounded-3 p-4">
+            <h2 class="fs-6 fw-semibold mb-3">Activity</h2>
+
+            <h3 class="small fw-semibold mb-2">Voted Bots</h3>
+            {% if voted_bots %}
+            <div class="d-flex flex-column gap-2 mb-3">
+              {% for bot in voted_bots %}
+              <div class="d-flex align-items-center gap-2">
+                <span class="style-badge style-{{ bot.style }}">
+                  <i class="bi bi-{{ bot.style_icon }}"></i>{{ bot.name }}
+                </span>
+                <span class="small text-body-secondary"
+                  >{{ bot.description }}</span
+                >
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <p class="small text-body-secondary mb-3">No voted bots yet.</p>
+            {% endif %}
+
+            <h3 class="small fw-semibold mb-2">Commented Bots</h3>
+            {% if commented_bots %}
+            <div class="d-flex flex-column gap-2">
+              {% for bot in commented_bots %}
+              <div class="d-flex align-items-center gap-2">
+                <span class="style-badge style-{{ bot.style }}">
+                  <i class="bi bi-{{ bot.style_icon }}"></i>{{ bot.name }}
+                </span>
+                <span class="small text-body-secondary"
+                  >{{ bot.description }}</span
+                >
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <p class="small text-body-secondary mb-0">No commented bots yet.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <!-- /tab-content -->
     </div>
+  </main>
 </div>
-
 <script>
-// Confirm delete input
-const deleteInput = document.getElementById('deleteConfirmInput');
-const confirmBtn = document.getElementById('confirmDeleteBtn');
-if (deleteInput) {
-    deleteInput.addEventListener('input', function () {
-        confirmBtn.disabled = this.value !== '{{ user.username }}';
+  const bio = document.getElementById("bio");
+  if (bio) {
+    bio.addEventListener("input", function () {
+      this.nextElementSibling.textContent = `${this.value.length}/160 characters`;
     });
-}
-
-// Avatar preview
-function previewAvatar(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            const preview = document.getElementById('avatarPreview');
-            preview.style.backgroundImage = `url(${e.target.result})`;
-            preview.style.backgroundSize = 'cover';
-            preview.style.backgroundPosition = 'center';
-            preview.textContent = '';
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function resetAvatar() {
-    const preview = document.getElementById('avatarPreview');
-    preview.style.backgroundImage = '';
-    preview.textContent = '{{ user.username[:1]|upper }}';
-}
-
-// Bio character counter
-const bio = document.getElementById('bio');
-if (bio) {
-    bio.addEventListener('input', function () {
-        this.nextElementSibling.textContent = `${this.value.length}/160 characters`;
-    });
-}
-
-// Confirm passwords match
-const newPw = document.getElementById('newPassword');
-const confirmPw = document.getElementById('confirmPassword');
-if (confirmPw) {
-    confirmPw.addEventListener('input', function () {
-        if (this.value !== newPw.value) {
-            this.setCustomValidity('Passwords do not match.');
-        } else {
-            this.setCustomValidity('');
-        }
-    });
-}
+  }
 </script>
 {% endblock %}
