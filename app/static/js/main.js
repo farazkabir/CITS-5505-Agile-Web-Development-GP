@@ -1,3 +1,13 @@
+/**
+ * Global UI helpers for NewsPulse.
+ *
+ * - Initialises Bootstrap tooltips on elements with `data-bs-toggle="tooltip"`.
+ * - Auto-dismisses flash alerts after 5 seconds.
+ * - Provides smooth-scroll for in-page anchor links.
+ * - Adds a scroll-driven shadow to the top navbar.
+ * - Provides an optimistic vote-toggle animation on post cards (visual only;
+ *   the actual API call is handled by inline scripts in the templates).
+ */
 $(function () {
     $('[data-bs-toggle="tooltip"]').each(function () {
         new bootstrap.Tooltip(this);

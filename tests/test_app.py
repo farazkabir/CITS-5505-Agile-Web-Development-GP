@@ -1,9 +1,22 @@
+"""
+Unit tests for the NewsPulse Flask application.
+
+Uses an in-memory SQLite database so tests are fast and isolated.
+Covers models (password hashing, public_name fallback, Post.make_hash),
+authentication flows (sign-up, sign-in), and voting logic.
+
+Run with:
+    python -m pytest tests/test_app.py
+"""
+
 import unittest
 from app import create_app, db
 from app.models import User, Bot, Post, Vote, Comment
 
 
 class TestConfig:
+    """Flask configuration overrides for unit tests."""
+
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite://"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -39,6 +52,7 @@ class BaseTestCase(unittest.TestCase):
         self.ctx.pop()
 
     def login(self, email="test@example.com", password="password123"):
+        """Authenticate with the test client and follow redirects."""
         return self.client.post("/signin", data={
             "email": email,
             "password": password,
