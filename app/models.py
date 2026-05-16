@@ -23,6 +23,10 @@ class User(UserMixin, db.Model):
     bio = db.Column(db.String(160), default="")
     website = db.Column(db.String(255), default="")
 
+    @property
+    def public_name(self):
+        return self.display_name or self.name
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
