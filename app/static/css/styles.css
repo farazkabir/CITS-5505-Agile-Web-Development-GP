@@ -25,59 +25,60 @@
    1. Design Tokens — Light Theme
    ============================================================ */
 :root {
-    --background: #f2f5f8;
-    --foreground: #121721;
-    --card: #ffffff;
-    --card-foreground: #14181f;
-    --popover: #ffffff;
-    --popover-foreground: #14181f;
-    --primary: #0fa8bd;
-    --primary-foreground: #ffffff;
-    --secondary: #eaecf0;
-    --secondary-foreground: #29303d;
-    --muted: #eaecf0;
-    --muted-foreground: #676f7e;
-    --accent: #5d52e0;
-    --accent-foreground: #ffffff;
-    --destructive: #ef4343;
-    --destructive-foreground: #fafafa;
-    --border: #dcdfe5;
-    --input: #dcdfe5;
-    --ring: #0fa8bd;
-    --chart-1: #0fa8bd;
-    --chart-2: #5d52e0;
-    --chart-3: #2a9d90;
-    --chart-4: #e8c468;
-    --chart-5: #f4a462;
-    --radius: 0.75rem;
-    --font-inter: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    --glass-bg: #ffffff99;
-    --glass-border: #ffffff4c;
-    --sidebar-background: #ffffff;
-    --sidebar-foreground: #29303d;
-    --sidebar-primary: #0fa8bd;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #e8edf3;
-    --sidebar-accent-foreground: #242e42;
-    --sidebar-border: #dae0e7;
-    --sidebar-ring: #0fa8bd;
+  --background: #f2f5f8;
+  --foreground: #121721;
+  --card: #ffffff;
+  --card-foreground: #14181f;
+  --popover: #ffffff;
+  --popover-foreground: #14181f;
+  --primary: #0fa8bd;
+  --primary-foreground: #ffffff;
+  --secondary: #eaecf0;
+  --secondary-foreground: #29303d;
+  --muted: #eaecf0;
+  --muted-foreground: #676f7e;
+  --accent: #5d52e0;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4343;
+  --destructive-foreground: #fafafa;
+  --border: #dcdfe5;
+  --input: #dcdfe5;
+  --ring: #0fa8bd;
+  --chart-1: #0fa8bd;
+  --chart-2: #5d52e0;
+  --chart-3: #2a9d90;
+  --chart-4: #e8c468;
+  --chart-5: #f4a462;
+  --radius: 0.75rem;
+  --font-inter:
+    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --glass-bg: #ffffff99;
+  --glass-border: #ffffff4c;
+  --sidebar-background: #ffffff;
+  --sidebar-foreground: #29303d;
+  --sidebar-primary: #0fa8bd;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8edf3;
+  --sidebar-accent-foreground: #242e42;
+  --sidebar-border: #dae0e7;
+  --sidebar-ring: #0fa8bd;
 
-    --bs-body-bg: var(--background);
-    --bs-body-color: var(--foreground);
-    --bs-body-font-family: var(--font-inter);
-    --bs-border-color: var(--border);
-    --bs-border-radius: var(--radius);
-    --bs-primary: var(--primary);
-    --bs-primary-rgb: 15, 168, 189;
-    --bs-secondary-rgb: 234, 236, 240;
-    --bs-danger: var(--destructive);
-    --bs-danger-rgb: 239, 67, 67;
-    --bs-link-color: var(--primary);
-    --bs-link-hover-color: var(--accent);
-    --bs-tertiary-bg: var(--card);
-    --bs-secondary-bg: var(--secondary);
-    --bs-emphasis-color: var(--foreground);
+  --bs-body-bg: var(--background);
+  --bs-body-color: var(--foreground);
+  --bs-body-font-family: var(--font-inter);
+  --bs-border-color: var(--border);
+  --bs-border-radius: var(--radius);
+  --bs-primary: var(--primary);
+  --bs-primary-rgb: 15, 168, 189;
+  --bs-secondary-rgb: 234, 236, 240;
+  --bs-danger: var(--destructive);
+  --bs-danger-rgb: 239, 67, 67;
+  --bs-link-color: var(--primary);
+  --bs-link-hover-color: var(--accent);
+  --bs-tertiary-bg: var(--card);
+  --bs-secondary-bg: var(--secondary);
+  --bs-emphasis-color: var(--foreground);
 }
 
 /* ============================================================
@@ -85,830 +86,883 @@
    ============================================================ */
 [data-bs-theme="dark"],
 .dark {
-    --background: #0d0f16;
-    --foreground: #e8eaee;
-    --card: #161822;
-    --card-foreground: #e8eaee;
-    --popover: #161822;
-    --popover-foreground: #e8eaee;
-    --primary: #11bed4;
-    --primary-foreground: #ffffff;
-    --secondary: #212430;
-    --secondary-foreground: #d3d7de;
-    --muted: #212430;
-    --muted-foreground: #818898;
-    --accent: #7267e4;
-    --accent-foreground: #ffffff;
-    --destructive: #7c1d1d;
-    --destructive-foreground: #fafafa;
-    --border: #262836;
-    --input: #262836;
-    --ring: #11bed4;
-    --chart-1: #11bed4;
-    --chart-2: #7267e4;
-    --chart-3: #30b5a6;
-    --chart-4: #ebcb7a;
-    --chart-5: #f5ac70;
-    --glass-bg: #13152099;
-    --glass-border: #292c3d66;
-    --sidebar-background: #12141c;
-    --sidebar-foreground: #d3d7de;
-    --sidebar-primary: #11bed4;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #1d1f2a;
-    --sidebar-accent-foreground: #d3d7de;
-    --sidebar-border: #1f222d;
-    --sidebar-ring: #11bed4;
+  --background: #0d0f16;
+  --foreground: #e8eaee;
+  --card: #161822;
+  --card-foreground: #e8eaee;
+  --popover: #161822;
+  --popover-foreground: #e8eaee;
+  --primary: #11bed4;
+  --primary-foreground: #ffffff;
+  --secondary: #212430;
+  --secondary-foreground: #d3d7de;
+  --muted: #212430;
+  --muted-foreground: #818898;
+  --accent: #7267e4;
+  --accent-foreground: #ffffff;
+  --destructive: #7c1d1d;
+  --destructive-foreground: #fafafa;
+  --border: #262836;
+  --input: #262836;
+  --ring: #11bed4;
+  --chart-1: #11bed4;
+  --chart-2: #7267e4;
+  --chart-3: #30b5a6;
+  --chart-4: #ebcb7a;
+  --chart-5: #f5ac70;
+  --glass-bg: #13152099;
+  --glass-border: #292c3d66;
+  --sidebar-background: #12141c;
+  --sidebar-foreground: #d3d7de;
+  --sidebar-primary: #11bed4;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1d1f2a;
+  --sidebar-accent-foreground: #d3d7de;
+  --sidebar-border: #1f222d;
+  --sidebar-ring: #11bed4;
 
-    --bs-primary-rgb: 17, 190, 212;
-    --bs-secondary-rgb: 33, 36, 48;
-    --bs-danger-rgb: 124, 29, 29;
+  --bs-primary-rgb: 17, 190, 212;
+  --bs-secondary-rgb: 33, 36, 48;
+  --bs-danger-rgb: 124, 29, 29;
 }
 
 /* ============================================================
    2. Global Resets & Typography
    ============================================================ */
 * {
-    border-color: var(--border);
+  border-color: var(--border);
 }
 
 *:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--ring), transparent 50%);
-    outline-offset: 2px;
+  outline: 2px solid color-mix(in srgb, var(--ring), transparent 50%);
+  outline-offset: 2px;
 }
 
 html {
-    color-scheme: light dark;
+  color-scheme: light dark;
 }
 
 body {
-    min-height: 100vh;
-    font-family: var(--font-inter);
-    color: var(--foreground);
-    background:
-        radial-gradient(circle at top left, color-mix(in srgb, var(--primary), transparent 88%), transparent 30rem),
-        radial-gradient(circle at bottom right, color-mix(in srgb, var(--accent), transparent 90%), transparent 28rem),
-        var(--background);
+  min-height: 100vh;
+  font-family: var(--font-inter);
+  color: var(--foreground);
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(in srgb, var(--primary), transparent 88%),
+      transparent 30rem
+    ),
+    radial-gradient(
+      circle at bottom right,
+      color-mix(in srgb, var(--accent), transparent 90%),
+      transparent 28rem
+    ),
+    var(--background);
 }
 
-code, kbd, pre, samp {
-    font-family: var(--font-mono);
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
 }
 
 /* ============================================================
    3. Bootstrap Overrides
    ============================================================ */
 .navbar.bg-body-tertiary {
-    background-color: var(--card) !important;
-    border-color: var(--border) !important;
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
 }
 
 .navbar-brand {
-    color: var(--foreground);
-    letter-spacing: -0.02em;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
 }
 
 .card {
-    background-color: var(--card);
-    color: var(--card-foreground);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .btn {
-    --bs-btn-border-radius: var(--radius);
-    font-weight: 500;
+  --bs-btn-border-radius: var(--radius);
+  font-weight: 500;
 }
 
 .btn-primary {
-    --bs-btn-bg: var(--primary);
-    --bs-btn-border-color: var(--primary);
-    --bs-btn-color: var(--primary-foreground);
-    --bs-btn-hover-bg: var(--accent);
-    --bs-btn-hover-border-color: var(--accent);
-    --bs-btn-hover-color: var(--accent-foreground);
-    --bs-btn-active-bg: var(--accent);
-    --bs-btn-active-border-color: var(--accent);
-    --bs-btn-active-color: var(--accent-foreground);
-    --bs-btn-disabled-bg: color-mix(in srgb, var(--primary), transparent 40%);
-    --bs-btn-disabled-border-color: color-mix(in srgb, var(--primary), transparent 40%);
-    --bs-btn-disabled-color: var(--primary-foreground);
+  --bs-btn-bg: var(--primary);
+  --bs-btn-border-color: var(--primary);
+  --bs-btn-color: var(--primary-foreground);
+  --bs-btn-hover-bg: var(--accent);
+  --bs-btn-hover-border-color: var(--accent);
+  --bs-btn-hover-color: var(--accent-foreground);
+  --bs-btn-active-bg: var(--accent);
+  --bs-btn-active-border-color: var(--accent);
+  --bs-btn-active-color: var(--accent-foreground);
+  --bs-btn-disabled-bg: color-mix(in srgb, var(--primary), transparent 40%);
+  --bs-btn-disabled-border-color: color-mix(
+    in srgb,
+    var(--primary),
+    transparent 40%
+  );
+  --bs-btn-disabled-color: var(--primary-foreground);
 }
 
 .btn-outline-secondary {
-    --bs-btn-color: var(--foreground);
-    --bs-btn-border-color: var(--border);
-    --bs-btn-hover-bg: var(--secondary);
-    --bs-btn-hover-border-color: var(--border);
-    --bs-btn-hover-color: var(--secondary-foreground);
-    --bs-btn-active-bg: var(--secondary);
-    --bs-btn-active-border-color: var(--border);
-    --bs-btn-active-color: var(--secondary-foreground);
+  --bs-btn-color: var(--foreground);
+  --bs-btn-border-color: var(--border);
+  --bs-btn-hover-bg: var(--secondary);
+  --bs-btn-hover-border-color: var(--border);
+  --bs-btn-hover-color: var(--secondary-foreground);
+  --bs-btn-active-bg: var(--secondary);
+  --bs-btn-active-border-color: var(--border);
+  --bs-btn-active-color: var(--secondary-foreground);
 }
 
 .form-control,
 .form-select {
-    background-color: var(--card);
-    border-color: var(--input);
-    color: var(--foreground);
-    border-radius: calc(var(--radius) - 0.25rem);
+  background-color: var(--card);
+  border-color: var(--input);
+  color: var(--foreground);
+  border-radius: calc(var(--radius) - 0.25rem);
 }
 
 .form-control::placeholder {
-    color: var(--muted-foreground);
+  color: var(--muted-foreground);
 }
 
 .form-control:focus,
 .form-select:focus {
-    background-color: var(--card);
-    border-color: var(--ring);
-    color: var(--foreground);
-    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--ring), transparent 75%);
+  background-color: var(--card);
+  border-color: var(--ring);
+  color: var(--foreground);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--ring), transparent 75%);
 }
 
 .form-check-input {
-    background-color: var(--card);
-    border-color: var(--input);
+  background-color: var(--card);
+  border-color: var(--input);
 }
 
 .form-check-input:checked {
-    background-color: var(--primary);
-    border-color: var(--primary);
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
 .form-control.is-invalid,
 .form-check-input.is-invalid,
 .was-validated .form-control:invalid {
-    border-color: var(--destructive);
+  border-color: var(--destructive);
 }
 
 .invalid-feedback {
-    color: var(--destructive);
+  color: var(--destructive);
 }
 
 .text-body-secondary {
-    color: var(--muted-foreground) !important;
+  color: var(--muted-foreground) !important;
 }
 
 a {
-    color: var(--primary);
-    text-decoration: none;
+  color: var(--primary);
+  text-decoration: none;
 }
 
 a:hover {
-    color: var(--accent);
-    text-decoration: none;
+  color: var(--accent);
+  text-decoration: none;
 }
 
 .alert {
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
 }
 
 .alert-success {
-    background-color: color-mix(in srgb, var(--primary), transparent 88%);
-    color: var(--foreground);
-    border-color: color-mix(in srgb, var(--primary), transparent 60%);
+  background-color: color-mix(in srgb, var(--primary), transparent 88%);
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--primary), transparent 60%);
 }
 
 .badge.text-bg-primary {
-    background-color: var(--primary) !important;
-    color: var(--primary-foreground) !important;
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
 }
 
 .feature-list li {
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--border);
-    color: var(--foreground);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
 }
 
 .feature-list li:last-child {
-    border-bottom: 0;
+  border-bottom: 0;
 }
 
 .feature-list li::before {
-    content: "+";
-    color: var(--primary);
-    font-weight: 700;
-    margin-right: 0.5rem;
+  content: "+";
+  color: var(--primary);
+  font-weight: 700;
+  margin-right: 0.5rem;
 }
 
 /* ============================================================
    4. Glass Morphism Utilities
    ============================================================ */
 .glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
 }
 
 .glass-heavy {
-    background: var(--glass-bg);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
 }
 
 /* ============================================================
    5. App Shell Layout
    ============================================================ */
 .app-shell {
-    min-height: 100vh;
-    display: flex;
+  min-height: 100vh;
+  display: flex;
 }
 
 .sidebar {
-    width: 14rem;
-    position: fixed;
-    inset: 0 auto 0 0;
-    z-index: 30;
-    background: var(--glass-bg);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-right: 1px solid var(--border);
+  width: 14rem;
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 30;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid var(--border);
 }
 
 .sidebar-offcanvas {
-    width: 16rem;
-    background: var(--card);
-    color: var(--foreground);
+  width: 16rem;
+  background: var(--card);
+  color: var(--foreground);
 }
 
 .app-main {
-    flex: 1 1 0;
-    min-width: 0;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 @media (min-width: 992px) {
-    .app-main {
-        margin-left: 14rem;
-    }
+  .app-main {
+    margin-left: 14rem;
+  }
 }
 
 .mobile-header {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .header-spacer {
-    width: 1.5rem;
-    display: inline-block;
+  width: 1.5rem;
+  display: inline-block;
 }
 
 .feed-container {
-    max-width: 42rem;
-    margin: 0 auto;
-    padding: 1.5rem 1rem;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
 }
 
 /* ============================================================
    6. Brand Identity
    ============================================================ */
 .brand-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.5rem;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: #fff;
-    font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 1rem;
 }
 
 .brand-text {
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* ============================================================
    7. Sidebar Navigation
    ============================================================ */
 .sidebar-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.625rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--muted-foreground);
-    text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .sidebar-link i {
-    font-size: 1rem;
-    width: 1rem;
-    text-align: center;
+  font-size: 1rem;
+  width: 1rem;
+  text-align: center;
 }
 
 .sidebar-link:hover {
-    color: var(--foreground);
-    background: color-mix(in srgb, var(--muted), transparent 40%);
-    text-decoration: none;
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--muted), transparent 40%);
+  text-decoration: none;
 }
 
 .sidebar-link.active {
-    background: color-mix(in srgb, var(--primary), transparent 88%);
-    color: var(--primary);
+  background: color-mix(in srgb, var(--primary), transparent 88%);
+  color: var(--primary);
 }
 
 /* ============================================================
    8. Theme Toggle
    ============================================================ */
 .theme-toggle-circle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    color: var(--muted-foreground);
-    transition: background-color 0.15s ease, color 0.15s ease;
-    cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--muted-foreground);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+  cursor: pointer;
 }
 
 .theme-toggle-circle:hover {
-    background: color-mix(in srgb, var(--primary), transparent 88%);
-    color: var(--primary);
+  background: color-mix(in srgb, var(--primary), transparent 88%);
+  color: var(--primary);
 }
 
 /* Glass primary CTA */
 .btn-glass-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    height: 2rem;
-    padding: 0 0.75rem;
-    border-radius: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--primary);
-    background: var(--glass-bg);
-    border: 1px solid color-mix(in srgb, var(--primary), transparent 80%);
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 2rem;
+  padding: 0 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--primary);
+  background: var(--glass-bg);
+  border: 1px solid color-mix(in srgb, var(--primary), transparent 80%);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .btn-glass-primary:hover {
-    background: color-mix(in srgb, var(--primary), transparent 88%);
-    color: var(--primary);
+  background: color-mix(in srgb, var(--primary), transparent 88%);
+  color: var(--primary);
 }
 
 /* ============================================================
    9. Filter Pills
    ============================================================ */
 .filter-pills {
-    display: flex;
-    gap: 0.375rem;
-    overflow-x: auto;
-    padding-bottom: 0.25rem;
-    scrollbar-width: none;
+  display: flex;
+  gap: 0.375rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
 }
 
 .filter-pills::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .filter-pill {
-    flex-shrink: 0;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    white-space: nowrap;
-    color: var(--muted-foreground);
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .filter-pill:hover {
-    color: var(--foreground);
-    text-decoration: none;
+  color: var(--foreground);
+  text-decoration: none;
 }
 
 .filter-pill.active {
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
 }
 
 /* ============================================================
    10. Post Cards & Voting
    ============================================================ */
 .post-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .post-card {
-    border-radius: 0.875rem;
-    transition: border-color 0.15s ease;
+  border-radius: 0.875rem;
+  transition: border-color 0.15s ease;
 }
 
 .post-card:hover {
-    border-color: color-mix(in srgb, var(--primary), transparent 70%);
+  border-color: color-mix(in srgb, var(--primary), transparent 70%);
 }
 
 .vote-col,
 .vote-col-mobile {
-    display: flex;
-    align-items: center;
-    gap: 0.125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
 }
 
 .vote-col {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .vote-col-mobile {
-    flex-direction: row;
+  flex-direction: row;
 }
 
 .vote-btn {
-    background: transparent;
-    border: 0;
-    padding: 0.25rem;
-    border-radius: 0.375rem;
-    color: var(--muted-foreground);
-    cursor: pointer;
-    line-height: 1;
-    transition: background-color 0.15s ease, color 0.15s ease;
+  background: transparent;
+  border: 0;
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .vote-btn:hover {
-    background: color-mix(in srgb, var(--primary), transparent 90%);
-    color: var(--primary);
+  background: color-mix(in srgb, var(--primary), transparent 90%);
+  color: var(--primary);
 }
 
 .vote-btn.upvote.active {
-    color: var(--primary);
+  color: var(--primary);
 }
 
 .vote-btn.downvote.active {
-    color: var(--accent);
+  color: var(--accent);
 }
 
 .vote-btn.downvote:hover {
-    background: color-mix(in srgb, var(--accent), transparent 90%);
-    color: var(--accent);
+  background: color-mix(in srgb, var(--accent), transparent 90%);
+  color: var(--accent);
 }
 
 .vote-count {
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
 }
 
 .vote-count.voted {
-    color: var(--primary);
+  color: var(--primary);
 }
 
 /* ============================================================
    11. Author & Badge Components
    ============================================================ */
 .avatar-gradient {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: #fff;
-    font-size: 0.625rem;
-    font-weight: 700;
-    flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .author-link {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: color-mix(in srgb, var(--foreground), transparent 20%);
-    text-decoration: none;
-    cursor: default;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--foreground), transparent 20%);
+  text-decoration: none;
+  cursor: default;
 }
 
 .author-link:hover {
-    color: color-mix(in srgb, var(--foreground), transparent 20%);
-    text-decoration: none;
+  color: color-mix(in srgb, var(--foreground), transparent 20%);
+  text-decoration: none;
 }
 
 .bot-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.125rem;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.375rem;
-    font-size: 0.625rem;
-    font-weight: 600;
-    background: color-mix(in srgb, var(--primary), transparent 88%);
-    color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--primary), transparent 88%);
+  color: var(--primary);
 }
 
 .bot-badge i {
-    font-size: 0.75rem;
+  font-size: 0.75rem;
 }
 
 .style-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.125rem 0.625rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    border: 1px solid;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid;
 }
 
 .style-badge i {
-    font-size: 0.75rem;
+  font-size: 0.75rem;
 }
 
 .style-meme {
-    background: color-mix(in srgb, var(--accent), transparent 85%);
-    color: var(--accent);
-    border-color: color-mix(in srgb, var(--accent), transparent 80%);
+  background: color-mix(in srgb, var(--accent), transparent 85%);
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent), transparent 80%);
 }
 
 .style-satire {
-    background: color-mix(in srgb, var(--chart-4), transparent 80%);
-    color: color-mix(in srgb, var(--chart-4), var(--foreground) 30%);
-    border-color: color-mix(in srgb, var(--chart-4), transparent 70%);
+  background: color-mix(in srgb, var(--chart-4), transparent 80%);
+  color: color-mix(in srgb, var(--chart-4), var(--foreground) 30%);
+  border-color: color-mix(in srgb, var(--chart-4), transparent 70%);
 }
 
 .style-anger,
 .style-breaking {
-    background: color-mix(in srgb, var(--destructive), transparent 85%);
-    color: var(--destructive);
-    border-color: color-mix(in srgb, var(--destructive), transparent 75%);
+  background: color-mix(in srgb, var(--destructive), transparent 85%);
+  color: var(--destructive);
+  border-color: color-mix(in srgb, var(--destructive), transparent 75%);
 }
 
 .style-question {
-    background: color-mix(in srgb, var(--chart-3), transparent 85%);
-    color: var(--chart-3);
-    border-color: color-mix(in srgb, var(--chart-3), transparent 75%);
+  background: color-mix(in srgb, var(--chart-3), transparent 85%);
+  color: var(--chart-3);
+  border-color: color-mix(in srgb, var(--chart-3), transparent 75%);
 }
 
 .style-wholesome {
-    background: color-mix(in srgb, var(--chart-5), transparent 80%);
-    color: color-mix(in srgb, var(--chart-5), var(--foreground) 30%);
-    border-color: color-mix(in srgb, var(--chart-5), transparent 70%);
+  background: color-mix(in srgb, var(--chart-5), transparent 80%);
+  color: color-mix(in srgb, var(--chart-5), var(--foreground) 30%);
+  border-color: color-mix(in srgb, var(--chart-5), transparent 70%);
 }
 
 .post-time {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.625rem;
-    color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.625rem;
+  color: var(--muted-foreground);
 }
 
 .post-time i {
-    font-size: 0.75rem;
+  font-size: 0.75rem;
 }
 
 .post-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
 .post-link:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .post-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.35;
-    color: var(--foreground);
-    margin: 0 0 0.25rem;
-    transition: color 0.15s ease;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--foreground);
+  margin: 0 0 0.25rem;
+  transition: color 0.15s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .post-card:hover .post-title {
-    color: var(--primary);
+  color: var(--primary);
 }
 
 .post-excerpt {
-    font-size: 0.75rem;
-    line-height: 1.5;
-    color: var(--muted-foreground);
-    margin: 0;
-    white-space: pre-line;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+  margin: 0;
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .comment-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.75rem;
-    color: var(--muted-foreground);
-    text-decoration: none;
-    transition: color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 .comment-link:hover {
-    color: var(--foreground);
-    text-decoration: none;
+  color: var(--foreground);
+  text-decoration: none;
 }
 
 .min-w-0 {
-    min-width: 0;
+  min-width: 0;
 }
 
 .empty-state {
-    border-radius: 0.875rem;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-    color: var(--muted-foreground);
+  border-radius: 0.875rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--muted-foreground);
 }
 
 .empty-state i {
-    display: block;
-    font-size: 1.75rem;
-    color: var(--primary);
-    margin-bottom: 0.5rem;
+  display: block;
+  font-size: 1.75rem;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
 }
 
 .empty-state h2 {
-    color: var(--foreground);
+  color: var(--foreground);
 }
 
 /* ============================================================
    Bot page
    ============================================================ */
 .bot-card {
-    transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
 .bot-card:hover {
-    border-color: color-mix(in srgb, var(--primary), transparent 60%);
+  border-color: color-mix(in srgb, var(--primary), transparent 60%);
 }
 
 .bot-card-inactive {
-    opacity: 0.6;
+  opacity: 0.6;
 }
 
 .bot-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.75rem;
-    font-size: 1rem;
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  flex-shrink: 0;
 }
 
-.bot-avatar-satire   { background: color-mix(in srgb, var(--chart-4), transparent 80%); color: color-mix(in srgb, var(--chart-4), var(--foreground) 20%); }
-.bot-avatar-meme     { background: color-mix(in srgb, var(--accent), transparent 80%);  color: var(--accent); }
-.bot-avatar-breaking { background: color-mix(in srgb, var(--destructive), transparent 80%); color: var(--destructive); }
-.bot-avatar-wholesome{ background: color-mix(in srgb, var(--chart-5), transparent 80%); color: color-mix(in srgb, var(--chart-5), var(--foreground) 20%); }
-.bot-avatar-question { background: color-mix(in srgb, var(--chart-3), transparent 80%); color: var(--chart-3); }
-.bot-avatar-anger    { background: color-mix(in srgb, var(--destructive), transparent 80%); color: var(--destructive); }
+.bot-avatar-satire {
+  background: color-mix(in srgb, var(--chart-4), transparent 80%);
+  color: color-mix(in srgb, var(--chart-4), var(--foreground) 20%);
+}
+.bot-avatar-meme {
+  background: color-mix(in srgb, var(--accent), transparent 80%);
+  color: var(--accent);
+}
+.bot-avatar-breaking {
+  background: color-mix(in srgb, var(--destructive), transparent 80%);
+  color: var(--destructive);
+}
+.bot-avatar-wholesome {
+  background: color-mix(in srgb, var(--chart-5), transparent 80%);
+  color: color-mix(in srgb, var(--chart-5), var(--foreground) 20%);
+}
+.bot-avatar-question {
+  background: color-mix(in srgb, var(--chart-3), transparent 80%);
+  color: var(--chart-3);
+}
+.bot-avatar-anger {
+  background: color-mix(in srgb, var(--destructive), transparent 80%);
+  color: var(--destructive);
+}
 
 /* ============================================================
    Account page
    ============================================================ */
 .account-tabs {
-    gap: 0.25rem;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
 }
 
 .account-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.4rem 0.875rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--muted-foreground);
-    background: transparent;
-    border: 1px solid transparent;
-    border-bottom: none;
-    border-radius: 0.5rem 0.5rem 0 0;
-    cursor: pointer;
-    transition: color 0.15s ease, background-color 0.15s ease;
-    text-decoration: none;
-    margin-bottom: -1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4rem 0.875rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+  text-decoration: none;
+  margin-bottom: -1px;
 }
 
 .account-tab:hover {
-    color: var(--foreground);
-    background: color-mix(in srgb, var(--primary), transparent 93%);
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--primary), transparent 93%);
 }
 
 .account-tab.active {
-    color: var(--primary);
-    background: var(--card);
-    border-color: var(--border);
-    border-bottom-color: var(--card);
+  color: var(--primary);
+  background: var(--card);
+  border-color: var(--border);
+  border-bottom-color: var(--card);
 }
 
 .account-avatar-lg {
-    width: 5rem;
-    height: 5rem;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: #fff;
-    font-size: 2rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* User profile page */
 .user-profile-avatar {
-    width: 5rem;
-    height: 5rem;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: #fff;
-    font-size: 2rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 4px 16px color-mix(in srgb, var(--primary), transparent 60%);
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary), transparent 60%);
 }
 
 .user-profile-header {
-    border-left: 3px solid var(--primary);
+  border-left: 3px solid var(--primary);
 }
 
 .user-tab-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    padding: 0 0.3rem;
-    border-radius: 999px;
-    font-size: 0.6rem;
-    font-weight: 700;
-    background: color-mix(in srgb, var(--primary), transparent 85%);
-    color: var(--primary);
-    margin-left: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--primary), transparent 85%);
+  color: var(--primary);
+  margin-left: 0.25rem;
 }
 
 .user-comment-bubble {
-    background: color-mix(in srgb, var(--primary), transparent 92%);
-    border-left: 2px solid var(--primary);
-    border-radius: 0 0.5rem 0.5rem 0;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.78rem;
-    line-height: 1.5;
+  background: color-mix(in srgb, var(--primary), transparent 92%);
+  border-left: 2px solid var(--primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
 }
 
 .user-voted-label {
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.7rem;
-    color: var(--primary);
-    font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--primary);
+  font-weight: 500;
 }
 
 .user-activity-card {
-    transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
 .user-activity-card:hover {
-    border-color: color-mix(in srgb, var(--primary), transparent 60%);
+  border-color: color-mix(in srgb, var(--primary), transparent 60%);
+}
+
+/* bugfix */
+/* for post.html */
+.comment-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
