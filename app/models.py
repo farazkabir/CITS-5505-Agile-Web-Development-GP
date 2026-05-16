@@ -96,3 +96,15 @@ class Comment(db.Model):
 
     post = db.relationship("Post", backref=db.backref("comments", lazy="dynamic"))
     user = db.relationship("User", backref=db.backref("comments", lazy="dynamic"))
+
+class Vote(db.Model):
+    """Tracks which user upvoted which post (one vote per user per post)."""
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    __table_args__ = (db.UniqueConstraint("post_id", "user_id", name="uq_vote_post_user"),)
+
+    post = db.relationship("Post", backref=db.backref("votes_list", lazy="dynamic"))
+    user = db.relationship("User", backref=db.backref("votes", lazy="dynamic"))

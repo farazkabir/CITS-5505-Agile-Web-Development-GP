@@ -429,5 +429,45 @@ def logout():
     flash("You have been logged out.", "success")
     return redirect(url_for("main.signin"))
 
+@main.route("/user/<int:user_id>")
+def user_profile(user_id):
+    from app.models import Vote
+    profile_user = User.query.get_or_404(user_id)
+    user_comments = Comment.query.filter_by(user_id=profile_user.id).order_by(Comment.created_at.desc()).all()
+    commented_posts = [{"post": c.post, "comment": c, "time_ago": _time_ago(c.created_at)} for c in user_comments]
+    user_votes = Vote.query.filter_by(user_id=profile_user.id).order_by(Vote.created_at.desc()).all()
+    voted_posts = [{"post": v.post, "time_ago": _time_ago(v.created_at)} for v in user_votes]
+    joined = getattr(profile_user, "created_at", None)
+    joined_str = joined.strftime("%B %Y") if joined else "Recently"
+    is_own_profile = current_user.is_authenticated and current_user.id == profile_user.id
+    return render_template(
+        "user.html",
+        profile_user=profile_user,
+        commented_posts=commented_posts,
+        voted_posts=voted_posts,
+        comment_count=len(commented_posts),
+        voted_count=len(voted_posts),
+        posts_commented_count=len({item["post"].id for item in commented_posts}),
+        joined=joined_str,
+        is_own_profile=is_own_profile,
+    )
+
+@main.route("/post/<int:post_id>/vote", methods=["POST"])
+@login_required
+def vote_post(post_id):
+    from app.models import Vote
+    post = Post.query.get_or_404(post_id)
+    existing = Vote.query.filter_by(post_id=post.id, user_id=current_user.id).first()
+    if existing:
+        db.session.delete(existing)
+        post.votes = max(0, post.votes - 1)
+        voted = False
+    else:
+        vote = Vote(post_id=post.id, user_id=current_user.id)
+        db.session.add(vote)
+        post.votes += 1
+        voted = True
+    db.session.commit()
+    return jsonify({"votes": post.votes, "voted": voted})
 
 
