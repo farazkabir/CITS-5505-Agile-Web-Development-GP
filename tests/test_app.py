@@ -18,7 +18,7 @@ class TestConfig:
     """Flask configuration overrides for unit tests."""
 
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite://"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "test-secret"
     WTF_CSRF_ENABLED = False
@@ -31,8 +31,7 @@ class BaseTestCase(unittest.TestCase):
     """Shared setup: creates an in-memory DB and seeds a test user + bot."""
 
     def setUp(self):
-        self.app = create_app()
-        self.app.config.from_object(TestConfig)
+        self.app = create_app(TestConfig)
         self.client = self.app.test_client()
         self.ctx = self.app.app_context()
         self.ctx.push()
