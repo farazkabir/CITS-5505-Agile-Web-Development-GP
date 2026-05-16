@@ -966,3 +966,19 @@ a:hover {
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+
+/* display name too long */
+/* post.html  user_profile.html*/
+.comment-author-name {
+  display: inline-block;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.profile-display-name {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

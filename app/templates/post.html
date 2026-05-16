@@ -185,8 +185,9 @@ endblock %} {% block body %}
               </div>
               {% endif %}
               <a
-                class="fw-semibold small text-decoration-none"
+                class="fw-semibold small text-decoration-none comment-author-name"
                 href="{{ url_for('main.user_profile', user_id=comment.user_id) }}"
+                title="{{ comment.author }}"
               >
                 {{ comment.author }}
               </a>
