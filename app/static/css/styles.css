@@ -959,16 +959,15 @@ a:hover {
   border-color: color-mix(in srgb, var(--primary), transparent 60%);
 }
 
-/* bugfix */
-/* for post.html */
+/* bug fixing */
+/* Bugfix: prevent long comment content from overflowing cards */
 .comment-content {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
-/* display name too long */
-/* post.html  user_profile.html*/
+/* Bugfix: prevent long author/display names from breaking layout */
 .comment-author-name {
   display: inline-block;
   max-width: 12rem;
