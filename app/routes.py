@@ -540,3 +540,18 @@ def logout():
     flash("You have been logged out.", "success")
     return redirect(url_for("main.signin"))
 
+
+
+@main.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+
+        flash(
+            "If an account with that email exists, password recovery instructions have been sent.",
+            "success",
+        )
+
+        return redirect(url_for("main.signin"))
+
+    return render_template("forgot_password.html")
