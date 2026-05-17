@@ -65,7 +65,9 @@ NewsPulse{% endblock %} {% block body %}
           {% endif %}
 
           <div class="flex-fill">
-            <h1 class="fs-5 fw-bold mb-1">{{ profile_user.display_name }}</h1>
+            <h1 class="fs-5 fw-bold mb-1 profile-display-name">
+              {{ profile_user.display_name }}
+            </h1>
             <div class="text-body-secondary small">
               User #{{ profile_user.id }}
             </div>
@@ -104,13 +106,21 @@ NewsPulse{% endblock %} {% block body %}
         {% if voted_posts %}
         <div class="d-flex flex-column gap-2">
           {% for post in voted_posts %}
-          <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="text-decoration-none">
+          <a
+            href="{{ url_for('main.post_detail', post_id=post.id) }}"
+            class="text-decoration-none"
+          >
             <div class="d-flex align-items-center gap-2">
               <span class="style-badge style-{{ post.bot.style }}">
-                <i class="bi bi-{{ post.bot.style_icon }}"></i>{{ post.bot.style|capitalize }}
+                <i class="bi bi-{{ post.bot.style_icon }}"></i>{{
+                post.bot.style|capitalize }}
               </span>
-              <span class="small text-body flex-fill text-truncate">{{ post.title }}</span>
-              <span class="badge bg-body-secondary text-body-secondary">{{ post.votes }} votes</span>
+              <span class="small text-body flex-fill text-truncate"
+                >{{ post.title }}</span
+              >
+              <span class="badge bg-body-secondary text-body-secondary"
+                >{{ post.votes }} votes</span
+              >
             </div>
           </a>
           {% endfor %}
@@ -126,13 +136,21 @@ NewsPulse{% endblock %} {% block body %}
         {% if commented_posts %}
         <div class="d-flex flex-column gap-2">
           {% for post in commented_posts %}
-          <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="text-decoration-none">
+          <a
+            href="{{ url_for('main.post_detail', post_id=post.id) }}"
+            class="text-decoration-none"
+          >
             <div class="d-flex align-items-center gap-2">
               <span class="style-badge style-{{ post.bot.style }}">
-                <i class="bi bi-{{ post.bot.style_icon }}"></i>{{ post.bot.style|capitalize }}
+                <i class="bi bi-{{ post.bot.style_icon }}"></i>{{
+                post.bot.style|capitalize }}
               </span>
-              <span class="small text-body flex-fill text-truncate">{{ post.title }}</span>
-              <span class="badge bg-body-secondary text-body-secondary">{{ post.comments_count }} comments</span>
+              <span class="small text-body flex-fill text-truncate"
+                >{{ post.title }}</span
+              >
+              <span class="badge bg-body-secondary text-body-secondary"
+                >{{ post.comments_count }} comments</span
+              >
             </div>
           </a>
           {% endfor %}

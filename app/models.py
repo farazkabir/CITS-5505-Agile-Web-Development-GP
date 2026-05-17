@@ -121,3 +121,4 @@ class Comment(db.Model):
     post = db.relationship("Post", backref=db.backref("comments", lazy="dynamic"))
     user = db.relationship("User", backref=db.backref("comments", lazy="dynamic"))
 
+
